@@ -5,96 +5,51 @@ import { ParticleBackground } from './components/ParticleBackground';
 import { HeaderProgress } from './components/HeaderProgress';
 import { MobileFrame } from './components/MobileFrame';
 
-// Scene Imports
-import { Scene00Preloader } from './scenes/Scene00Preloader';
-import { Scene01PersonalAccess } from './scenes/Scene01PersonalAccess';
-import { Scene02TheWarning } from './scenes/Scene02TheWarning';
-import { Scene03WhatsAppChat } from './scenes/Scene03WhatsAppChat';
-import { Scene04TheMission } from './scenes/Scene04TheMission';
-import { Scene05MemoryQuestion1 } from './scenes/Scene05MemoryQuestion1';
-import { Scene06MemoryQuestion2 } from './scenes/Scene06MemoryQuestion2';
-import { Scene07BalloonRoom } from './scenes/Scene07BalloonRoom';
-import { Scene08OurUniverse } from './scenes/Scene08OurUniverse';
-import { Scene09MemoryCard } from './scenes/Scene09MemoryCard';
-import { Scene10PolaroidStack } from './scenes/Scene10PolaroidStack';
-import { Scene11Statistics } from './scenes/Scene11Statistics';
-import { Scene12PrivateMessage } from './scenes/Scene12PrivateMessage';
-import { Scene13VoiceMessage } from './scenes/Scene13VoiceMessage';
-import { Scene14TheLetter } from './scenes/Scene14TheLetter';
-import { Scene15HandwrittenLetter } from './scenes/Scene15HandwrittenLetter';
-import { Scene16SecretDiscovery } from './scenes/Scene16SecretDiscovery';
-import { Scene17TheCandle } from './scenes/Scene17TheCandle';
-import { Scene18TheWish } from './scenes/Scene18TheWish';
-import { Scene19TheGift } from './scenes/Scene19TheGift';
-import { Scene20TheMisdirection } from './scenes/Scene20TheMisdirection';
-import { Scene21TheStoryReveal } from './scenes/Scene21TheStoryReveal';
-import { Scene22TheNextChapter } from './scenes/Scene22TheNextChapter';
-import { Scene23FutureBucketList } from './scenes/Scene23FutureBucketList';
-import { Scene24FinalMessage } from './scenes/Scene24FinalMessage';
-import { Scene25FinalPhoto } from './scenes/Scene25FinalPhoto';
-import { Scene26OurStoryVault } from './scenes/Scene26OurStoryVault';
+// V2 12-Scene Imports
+import { Scene01TheHook } from './scenes/v2/Scene01TheHook';
+import { Scene02SecretMessage } from './scenes/v2/Scene02SecretMessage';
+import { Scene03MemoryGame } from './scenes/v2/Scene03MemoryGame';
+import { Scene04BalloonChallenge } from './scenes/v2/Scene04BalloonChallenge';
+import { Scene05OurUniverse } from './scenes/v2/Scene05OurUniverse';
+import { Scene06PolaroidFlashback } from './scenes/v2/Scene06PolaroidFlashback';
+import { Scene07Statistics } from './scenes/v2/Scene07Statistics';
+import { Scene08VoiceMessage } from './scenes/v2/Scene08VoiceMessage';
+import { Scene09LetterAndCandle } from './scenes/v2/Scene09LetterAndCandle';
+import { Scene10TheLastGift } from './scenes/v2/Scene10TheLastGift';
+import { Scene11NextChapter } from './scenes/v2/Scene11NextChapter';
+import { Scene12FinalReveal } from './scenes/v2/Scene12FinalReveal';
 
 const SceneRenderer: React.FC = () => {
   const { currentScene } = useStory();
 
   const renderScene = () => {
     switch (currentScene) {
-      case 0:
-        return <Scene00Preloader />;
       case 1:
-        return <Scene01PersonalAccess />;
+        return <Scene01TheHook />;
       case 2:
-        return <Scene02TheWarning />;
+        return <Scene02SecretMessage />;
       case 3:
-        return <Scene03WhatsAppChat />;
+        return <Scene03MemoryGame />;
       case 4:
-        return <Scene04TheMission />;
+        return <Scene04BalloonChallenge />;
       case 5:
-        return <Scene05MemoryQuestion1 />;
+        return <Scene05OurUniverse />;
       case 6:
-        return <Scene06MemoryQuestion2 />;
+        return <Scene06PolaroidFlashback />;
       case 7:
-        return <Scene07BalloonRoom />;
+        return <Scene07Statistics />;
       case 8:
-        return <Scene08OurUniverse />;
+        return <Scene08VoiceMessage />;
       case 9:
-        return <Scene09MemoryCard />;
+        return <Scene09LetterAndCandle />;
       case 10:
-        return <Scene10PolaroidStack />;
+        return <Scene10TheLastGift />;
       case 11:
-        return <Scene11Statistics />;
+        return <Scene11NextChapter />;
       case 12:
-        return <Scene12PrivateMessage />;
-      case 13:
-        return <Scene13VoiceMessage />;
-      case 14:
-        return <Scene14TheLetter />;
-      case 15:
-        return <Scene15HandwrittenLetter />;
-      case 16:
-        return <Scene16SecretDiscovery />;
-      case 17:
-        return <Scene17TheCandle />;
-      case 18:
-        return <Scene18TheWish />;
-      case 19:
-        return <Scene19TheGift />;
-      case 20:
-        return <Scene20TheMisdirection />;
-      case 21:
-        return <Scene21TheStoryReveal />;
-      case 22:
-        return <Scene22TheNextChapter />;
-      case 23:
-        return <Scene23FutureBucketList />;
-      case 24:
-        return <Scene24FinalMessage />;
-      case 25:
-        return <Scene25FinalPhoto />;
-      case 26:
-        return <Scene26OurStoryVault />;
+        return <Scene12FinalReveal />;
       default:
-        return <Scene01PersonalAccess />;
+        return <Scene01TheHook />;
     }
   };
 
@@ -105,7 +60,7 @@ const SceneRenderer: React.FC = () => {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 1.02 }}
-        transition={{ duration: 0.45, ease: 'easeInOut' }}
+        transition={{ duration: 0.4, ease: 'easeInOut' }}
         className="w-full flex-1 flex flex-col"
       >
         {renderScene()}

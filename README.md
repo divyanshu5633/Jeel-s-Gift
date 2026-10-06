@@ -1,72 +1,40 @@
-# Interactive Couple Surprise — Demo V1
+# Interactive Couple Surprise — Demo V2
 
-A cinematic, mobile-first interactive experience designed to surprise a partner through a series of tactile chapters, secret discoveries, playful questions, and emotional reveals.
+A 3.5–4.5 minute interactive cinematic mini-film experience designed to surprise a partner through tactile chapters, seamless continuous transitions, secret discoveries, and emotional reveals.
 
 ---
 
-## 🌟 Quick Start
-
-To launch and explore the experience locally:
+## ⚡ Quick Start
 
 ```bash
 npm run dev
 ```
 
-Then open the local URL in your browser (usually `http://localhost:5173`).
+- **Local:** `http://localhost:5173/`
+- **Network (on your phone):** `http://192.168.29.106:5173/`
 
-- **On Desktop:** The app displays an authentic mobile preview frame (390px iPhone-style bezel) with a toggle in the bottom right corner to switch to full-window immersion if desired.
-- **On Mobile:** Open the URL on any phone (iOS / Android) for a full-screen, native application feel.
-
----
-
-## 🎬 Experience Walkthrough (Scenes 00 – 26)
-
-1. **Scene 00 — Entry / Preloader:** Atmospheric dark room with gentle stardust motes, progress dots (`● ○ ○ ○`), expanding into the next scene upon completion.
-2. **Scene 01 — Personal Access:** Minimalist dark cinematic intro for **Aanya**, featuring the `ENTER →` button with scale, blur, and radial glow expansion.
-3. **Scene 02 — The Warning:** Line-by-line audio prompt asking to put headphones on. Heartbeat-animated `I'M READY` button with a soft flash transition.
-4. **Scene 03 — WhatsApp-Style Chat:** Private chat interface from **Arjun** with real-time typing indicators, sequential chat bubbles, and a particle dissolution transition.
-5. **Scene 04 — The Mission:** "MISSION 01: Let's see how well you remember us."
-6. **Scene 05 — Memory Question #1:** "Where did our story begin?" with interactive cards, playful wobble on incorrect answers, and celebratory chimes + zooming memory photograph on correct answer (*The College*).
-7. **Scene 06 — Memory Question #2:** "Who fell first?" with witty diplomatic feedback, transforming into an expanding glowing heart.
-8. **Scene 07 — Balloon Room:** Floating balloons that react to touch. Tap to pop each with particle bursts and sound effects, revealing the hidden date, memory, secret, and clue (*"Look for the stars"*).
-9. **Scene 08 — Our Universe:** Night sky constellation where every glowing star represents a memory. Hovering or tapping reveals memory tags.
-10. **Scene 09 — Memory Card:** Polaroid presentation with romantic captions and intuitive pagination.
-11. **Scene 10 — Polaroid Memory Stack:** Interactive swipeable Polaroid deck with lightbox expansion to view photos full-screen with blurred background.
-12. **Scene 11 — Relationship Statistics:** Upward count-up animations for conversations (1,284), arguments (327), laughs (583), food thefts (91), and infinite reasons (∞), collapsing into a glowing heart.
-13. **Scene 12 — Private Message:** Minimal screen with a 1.5s press-and-hold radial progress unlock mechanism.
-14. **Scene 13 — Voice Message:** Profile avatar, interactive audio waveform with real-time audio playback simulation, scrub bar, and transcript preview.
-15. **Scene 14 — The Letter:** 3D vintage envelope with wax seal that unfolds physically, sliding out the handwritten letter.
-16. **Scene 15 — Handwritten Letter:** Warm textured paper with progressive line-by-line cursive handwriting reveal.
-17. **Scene 16 — Secret Discovery:** Interactive scavenger hunt where the user taps to discover 3 hidden secrets (First impression smile, nervous hello, the smile-and-look-away moment).
-18. **Scene 17 — The Cake & Candle:** Dark room with a candle flame that flickers and leans when touched. Tap to blow out the candle with a smoke puff sound effect into total darkness.
-19. **Scene 18 — The Wish:** Poetic sequential lines: *"I already made mine... And it wasn't for anything I could buy... More us."*
-20. **Scene 19 — The Gift:** 3D ribboned gift box with gentle breathing animation. Tapping opens the box and suddenly cuts to pitch black.
-21. **Scene 20 — The Misdirection:** Dramatic black screen with musical shift: *"You thought this was the surprise. It isn't. The real surprise is what comes next."*
-22. **Scene 21 — The Story Reveal:** Multi-depth photo constellation drifting in 3D parallax, transitioning into a warm golden dawn horizon.
-23. **Scene 22 — The Next Chapter:** Horizontal timeline (2026, 2027, 2028, Future) with cards for dreams and journeys yet to come.
-24. **Scene 23 — Future Bucket List:** Interactive checklist with checkmark animations and micro-confetti for dreams to achieve together.
-25. **Scene 24 — Final Message:** Distraction-free, clean typography leading to the heartfelt declaration: *"But I know who I want beside me. You. ❤️"*
-26. **Scene 25 — Final Photo:** Final keepsake photo (*"Happy Birthday, Aanya. Thank you for being my favourite chapter. — Arjun"*) with a 2-second silence before revealing `OUR STORY VAULT` and `PLAY IT AGAIN`.
-27. **Scene 26 — Our Story Vault:** Permanent digital archive with tabs for Timeline, Photo Gallery, Bucket List, Voice Memo, Handwritten Letter, and a Replay button.
+On desktop, the experience renders in an authentic mobile frame with a toggle to full window. On mobile browsers, it expands into a full-screen, native application feel.
 
 ---
 
-## 🎨 How to Personalize (No Code Changes Required)
+## 🎬 V2 Flow (12 Core Scenes)
 
-All content is centralized in:
+1. **Scene 01 — The Hook (~10–15s):** Dark cinematic opening with headphone prompt and heartbeat `START` button that zooms directly into the experience.
+2. **Scene 02 — The Secret Message (~15–20s):** Stylized private message exchange from Arjun culminating in `PROVE IT ❤️`, where the chat bubbles float upward directly into the question.
+3. **Scene 03 — Quick Memory Game (~30–40s):** Fast 2-question challenge. Correct answers glow and physically morph into a floating balloon.
+4. **Scene 04 — Balloon Challenge (~25–35s):** 4 floating balloons revealing the date (`14.02.2025`), memory (`Our first adventure.`), secret (`I was nervous too.`), and clue (`Look up.`), dissolving upward into the night sky.
+5. **Scene 05 — Our Universe (~40–50s):** 6 glowing stars in a constellation. Tapping a star triggers a camera zoom into a full-screen photograph memory with swipe navigation.
+6. **Scene 06 — Polaroid Flashback (~25–30s):** Stack of 3 swipeable Polaroids with tap-to-expand lightbox. Cards scatter into the next scene.
+7. **Scene 07 — Relationship Statistics (~20–25s):** Rapid count-up counters (1,284 conversations, 327 arguments, 91 food thefts, ∞ reasons) collapsing into a single glowing heart.
+8. **Scene 08 — Private Voice Message (~25–35s):** Emotional pause with a 1.5s circular hold-to-unlock mechanism and interactive audio waveform player.
+9. **Scene 09 — Letter + Candle Combined (~30–40s):** Seamless sequence combining the handwritten letter (`Dear Aanya...`) which folds back into an envelope, revealing a birthday candle that flickers and extinguishes into darkness upon tap/hold.
+10. **Scene 10 — The Last Gift (~20–25s):** Centered gift box that opens into a pitch black screen with musical key shift (*"You thought that was the surprise. It isn't."*).
+11. **Scene 11 — The Next Chapter (~25–35s):** 3 future ideas (*"Places we'll go"*, *"Things we'll experience"*, *"Things we haven't even imagined yet"*).
+12. **Scene 12 — Final Reveal (~30–40s):** Quiet, clean typography (*"But I know who I want beside me. You. ❤️"*), keepsake photograph, and replay controls (*`PLAY AGAIN`* / *`START OUR STORY AGAIN`*).
+
+---
+
+## 🎨 Personalization
+
+To replace names, photos, dates, questions, voice transcripts, or letter text for any recipient, simply edit:
 [`src/config/storyConfig.ts`](file:///c:/Users/Hp/Desktop/Jeel%20Gift/src/config/storyConfig.ts)
-
-To personalize the experience for any couple:
-1. Update recipient (`recipient: '...'`) and sender (`sender: '...'`).
-2. Replace photo URLs or drop files into `/public/assets/images/`.
-3. Update memories, questions, dates, timeline years, and letter paragraphs.
-4. Drop an audio file into `/public/assets/audio/` or use the built-in Web Audio API tone generator.
-
----
-
-## 🛠 Tech Stack
-- **Framework:** React 19 + TypeScript + Vite
-- **Styling:** Tailwind CSS + Custom Design System
-- **Animations:** Motion for React
-- **Icons:** Lucide React
-- **Audio:** Web Audio API sound synthesis (procedural ambient chords, key change, balloon pops, UI clicks, chimes, and flame extinguish)

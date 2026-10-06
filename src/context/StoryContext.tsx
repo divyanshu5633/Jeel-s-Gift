@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { storyConfig } from '../config/storyConfig';
 import { sounds } from '../utils/soundEffects';
 
@@ -11,77 +11,53 @@ interface StoryContextType {
   nextScene: () => void;
   prevScene: () => void;
   restartExperience: () => void;
-  
-  // Scene-specific states
+
+  // Scene state
   poppedBalloons: string[];
   popBalloon: (id: string) => void;
-  
-  discoveredStars: string[];
-  discoverStar: (id: string) => void;
-  activeStarId: string | null;
-  setActiveStarId: (id: string | null) => void;
-  
-  currentPolaroidIdx: number;
-  setCurrentPolaroidIdx: (idx: number) => void;
-  
+
+  visitedStars: string[];
+  visitStar: (id: string) => void;
+
+  polaroidIdx: number;
+  setPolaroidIdx: (idx: number) => void;
+
   isPrivateUnlocked: boolean;
   setPrivateUnlocked: (unlocked: boolean) => void;
-  
+
   voicePlaying: boolean;
   voiceProgress: number;
   toggleVoicePlay: () => void;
-  
-  discoveredSecrets: string[];
-  discoverSecret: (id: string) => void;
-  
+
   candleExtinguished: boolean;
   extinguishCandle: () => void;
-  
+
   giftOpened: boolean;
   openGift: () => void;
-  
-  checkedBucketItems: string[];
-  toggleBucketItem: (id: string) => void;
 }
 
 const StoryContext = createContext<StoryContextType | null>(null);
 
 export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentScene, setCurrentScene] = useState<number>(0);
+  const [currentScene, setCurrentScene] = useState<number>(1);
   const [isMuted, setIsMuted] = useState<boolean>(false);
-  
+
   const [poppedBalloons, setPoppedBalloons] = useState<string[]>([]);
-  const [discoveredStars, setDiscoveredStars] = useState<string[]>([]);
-  const [activeStarId, setActiveStarId] = useState<string | null>(null);
-  const [currentPolaroidIdx, setCurrentPolaroidIdx] = useState<number>(0);
+  const [visitedStars, setVisitedStars] = useState<string[]>([]);
+  const [polaroidIdx, setPolaroidIdx] = useState<number>(0);
   const [isPrivateUnlocked, setPrivateUnlocked] = useState<boolean>(false);
   const [voicePlaying, setVoicePlaying] = useState<boolean>(false);
   const [voiceProgress, setVoiceProgress] = useState<number>(0);
-  const [discoveredSecrets, setDiscoveredSecrets] = useState<string[]>([]);
   const [candleExtinguished, setCandleExtinguished] = useState<boolean>(false);
   const [giftOpened, setGiftOpened] = useState<boolean>(false);
-  const [checkedBucketItems, setCheckedBucketItems] = useState<string[]>([]);
 
-  // Cleanup function for voice audio
-  const stopVoiceRef = React.useRef<(() => void) | null>(null);
-
-  // Auto transition from scene 0 to 1 after preloader
-  useEffect(() => {
-    if (currentScene === 0) {
-      const timer = setTimeout(() => {
-        setCurrentScene(1);
-      }, 2600);
-      return () => clearTimeout(timer);
-    }
-  }, [currentScene]);
+  const stopVoiceRef = useRef<(() => void) | null>(null);
 
   // Audio atmosphere changes
   useEffect(() => {
-    // Start ambient music from Scene 02 onwards
-    if (currentScene >= 2 && currentScene < 20) {
+    if (currentScene >= 1 && currentScene < 10) {
       sounds.startAmbientMusic('calm');
-    } else if (currentScene >= 20) {
-      // Brighter cinematic atmosphere for reveals
+    } else if (currentScene >= 10) {
       sounds.startAmbientMusic('reveal');
     }
   }, [currentScene]);
@@ -93,21 +69,20 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToScene = (scene: number) => {
     sounds.playTap();
-    // Stop voice if changing scene
     if (stopVoiceRef.current) {
       stopVoiceRef.current();
       setVoicePlaying(false);
     }
-    setCurrentScene(scene);
+    setCurrentScene(Math.max(1, Math.min(12, scene)));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const nextScene = () => {
-    goToScene(Math.min(26, currentScene + 1));
+    goToScene(currentScene + 1);
   };
 
   const prevScene = () => {
-    goToScene(Math.max(0, currentScene - 1));
+    goToScene(currentScene - 1);
   };
 
   const restartExperience = () => {
@@ -118,15 +93,12 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setVoicePlaying(false);
     setVoiceProgress(0);
     setPoppedBalloons([]);
-    setDiscoveredStars([]);
-    setActiveStarId(null);
-    setCurrentPolaroidIdx(0);
+    setVisitedStars([]);
+    setPolaroidIdx(0);
     setPrivateUnlocked(false);
-    setDiscoveredSecrets([]);
     setCandleExtinguished(false);
     setGiftOpened(false);
-    setCheckedBucketItems([]);
-    setCurrentScene(1); // Return to Scene 01 with faster transition as per spec
+    setCurrentScene(1);
   };
 
   const popBalloon = (id: string) => {
@@ -136,11 +108,10 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const discoverStar = (id: string) => {
+  const visitStar = (id: string) => {
     sounds.playStarChime();
-    setActiveStarId(id);
-    if (!discoveredStars.includes(id)) {
-      setDiscoveredStars((prev) => [...prev, id]);
+    if (!visitedStars.includes(id)) {
+      setVisitedStars((prev) => [...prev, id]);
     }
   };
 
@@ -166,13 +137,6 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
-  const discoverSecret = (id: string) => {
-    if (!discoveredSecrets.includes(id)) {
-      sounds.playCelebration();
-      setDiscoveredSecrets((prev) => [...prev, id]);
-    }
-  };
-
   const extinguishCandle = () => {
     if (!candleExtinguished) {
       sounds.playExtinguish();
@@ -183,13 +147,6 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const openGift = () => {
     sounds.playUnlock();
     setGiftOpened(true);
-  };
-
-  const toggleBucketItem = (id: string) => {
-    sounds.playTap();
-    setCheckedBucketItems((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
   };
 
   return (
@@ -205,25 +162,19 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         restartExperience,
         poppedBalloons,
         popBalloon,
-        discoveredStars,
-        discoverStar,
-        activeStarId,
-        setActiveStarId,
-        currentPolaroidIdx,
-        setCurrentPolaroidIdx,
+        visitedStars,
+        visitStar,
+        polaroidIdx,
+        setPolaroidIdx,
         isPrivateUnlocked,
         setPrivateUnlocked,
         voicePlaying,
         voiceProgress,
         toggleVoicePlay,
-        discoveredSecrets,
-        discoverSecret,
         candleExtinguished,
         extinguishCandle,
         giftOpened,
         openGift,
-        checkedBucketItems,
-        toggleBucketItem,
       }}
     >
       {children}

@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Headphones, Heart } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
 import { sounds } from '../../utils/soundEffects';
+import { MicroHint } from '../../components/MicroHint';
 
 export const Scene01TheHook: React.FC = () => {
   const { config, nextScene } = useStory();
@@ -13,17 +14,17 @@ export const Scene01TheHook: React.FC = () => {
     setIsZooming(true);
     setTimeout(() => {
       nextScene();
-    }, 600);
+    }, 650);
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-between p-8 text-center select-none bg-radial from-[#150a18] via-[#08040b] to-black overflow-hidden">
+    <div className="relative flex min-h-dvh flex-col items-center justify-between p-6 sm:p-8 text-center select-none bg-radial from-[#150a18] via-[#08040b] to-black overflow-hidden">
       {/* Cinematic zoom transition */}
       <AnimatePresence>
         {isZooming && (
           <motion.div
             initial={{ scale: 0.1, opacity: 0 }}
-            animate={{ scale: 22, opacity: 1 }}
+            animate={{ scale: 24, opacity: 1 }}
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             className="pointer-events-none fixed z-50 h-32 w-32 rounded-full bg-rose-500/30 blur-2xl"
           />
@@ -48,7 +49,7 @@ export const Scene01TheHook: React.FC = () => {
           transition={{ duration: 0.8 }}
           className="text-[11px] uppercase tracking-[0.3em] text-neutral-400 mb-3"
         >
-          PRIVATE TRANSMISSION
+          CHAPTER 01 • PRIVATE TRANSMISSION
         </motion.p>
 
         <motion.h1
@@ -71,21 +72,21 @@ export const Scene01TheHook: React.FC = () => {
 
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.8 }}
+          animate={{ opacity: 0.85 }}
           transition={{ duration: 0.8, delay: 0.6 }}
           className="mt-6 flex items-center gap-2 text-xs text-rose-300/80"
         >
-          <Headphones size={14} className="animate-pulse" />
+          <Headphones size={15} className="animate-pulse" />
           <span>{config.hook.headphonesHint}</span>
         </motion.div>
       </motion.div>
 
-      {/* Heartbeat Pulse Start Button */}
+      {/* Start Button */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.8 }}
-        className="w-full max-w-xs pb-6"
+        className="w-full max-w-xs pb-6 flex flex-col items-center gap-2"
       >
         <button
           onClick={handleStart}
@@ -100,6 +101,8 @@ export const Scene01TheHook: React.FC = () => {
           </motion.span>
           <Heart size={16} className="fill-white animate-pulse" />
         </button>
+
+        <MicroHint text="Tap START to begin our secret mission" />
       </motion.div>
     </div>
   );

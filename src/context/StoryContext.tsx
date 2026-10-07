@@ -12,26 +12,38 @@ interface StoryContextType {
   prevScene: () => void;
   restartExperience: () => void;
 
-  // Scene state
+  // Scene 04 Balloon Room
   poppedBalloons: string[];
   popBalloon: (id: string) => void;
 
+  // Scene 05 Our Universe
   visitedStars: string[];
   visitStar: (id: string) => void;
 
+  // Scene 06 Story Vault
+  unlockedVaultItems: string[];
+  unlockVaultItem: (id: string) => void;
+
+  // Scene 07 Polaroid Flashback
   polaroidIdx: number;
   setPolaroidIdx: (idx: number) => void;
 
+  // Scene 09 Voice Message
   isPrivateUnlocked: boolean;
   setPrivateUnlocked: (unlocked: boolean) => void;
-
   voicePlaying: boolean;
   voiceProgress: number;
   toggleVoicePlay: () => void;
 
+  // Scene 11 Candle
   candleExtinguished: boolean;
   extinguishCandle: () => void;
 
+  // Scene 12 Promises
+  checkedPromises: string[];
+  togglePromise: (id: string) => void;
+
+  // Scene 13 Gift
   giftOpened: boolean;
   openGift: () => void;
 }
@@ -42,22 +54,32 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentScene, setCurrentScene] = useState<number>(1);
   const [isMuted, setIsMuted] = useState<boolean>(false);
 
+  // Scene State tracking
   const [poppedBalloons, setPoppedBalloons] = useState<string[]>([]);
   const [visitedStars, setVisitedStars] = useState<string[]>([]);
+  const [unlockedVaultItems, setUnlockedVaultItems] = useState<string[]>([
+    'vault-1',
+    'vault-2',
+    'vault-3',
+    'vault-4',
+    'vault-5',
+    'vault-6',
+  ]);
   const [polaroidIdx, setPolaroidIdx] = useState<number>(0);
   const [isPrivateUnlocked, setPrivateUnlocked] = useState<boolean>(false);
   const [voicePlaying, setVoicePlaying] = useState<boolean>(false);
   const [voiceProgress, setVoiceProgress] = useState<number>(0);
   const [candleExtinguished, setCandleExtinguished] = useState<boolean>(false);
+  const [checkedPromises, setCheckedPromises] = useState<string[]>([]);
   const [giftOpened, setGiftOpened] = useState<boolean>(false);
 
   const stopVoiceRef = useRef<(() => void) | null>(null);
 
-  // Audio atmosphere changes
+  // Ambient soundscape handling based on emotional progression
   useEffect(() => {
-    if (currentScene >= 1 && currentScene < 10) {
+    if (currentScene >= 2 && currentScene < 13) {
       sounds.startAmbientMusic('calm');
-    } else if (currentScene >= 10) {
+    } else if (currentScene >= 13) {
       sounds.startAmbientMusic('reveal');
     }
   }, [currentScene]);
@@ -73,7 +95,8 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       stopVoiceRef.current();
       setVoicePlaying(false);
     }
-    setCurrentScene(Math.max(1, Math.min(12, scene)));
+    const targetScene = Math.max(1, Math.min(14, scene));
+    setCurrentScene(targetScene);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -97,8 +120,13 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setPolaroidIdx(0);
     setPrivateUnlocked(false);
     setCandleExtinguished(false);
+    setCheckedPromises([]);
     setGiftOpened(false);
     setCurrentScene(1);
+
+    if (window.location.search || window.location.hash || window.location.pathname !== '/') {
+      window.history.replaceState({}, '', '/');
+    }
   };
 
   const popBalloon = (id: string) => {
@@ -112,6 +140,13 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     sounds.playStarChime();
     if (!visitedStars.includes(id)) {
       setVisitedStars((prev) => [...prev, id]);
+    }
+  };
+
+  const unlockVaultItem = (id: string) => {
+    sounds.playUnlock();
+    if (!unlockedVaultItems.includes(id)) {
+      setUnlockedVaultItems((prev) => [...prev, id]);
     }
   };
 
@@ -144,8 +179,15 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   };
 
+  const togglePromise = (id: string) => {
+    sounds.playTap();
+    setCheckedPromises((prev) =>
+      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
+    );
+  };
+
   const openGift = () => {
-    sounds.playUnlock();
+    sounds.playRibbonOpen();
     setGiftOpened(true);
   };
 
@@ -164,6 +206,8 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         popBalloon,
         visitedStars,
         visitStar,
+        unlockedVaultItems,
+        unlockVaultItem,
         polaroidIdx,
         setPolaroidIdx,
         isPrivateUnlocked,
@@ -173,6 +217,8 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         toggleVoicePlay,
         candleExtinguished,
         extinguishCandle,
+        checkedPromises,
+        togglePromise,
         giftOpened,
         openGift,
       }}

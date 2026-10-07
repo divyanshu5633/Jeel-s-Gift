@@ -4,57 +4,60 @@ import confetti from 'canvas-confetti';
 import { Heart, Sparkles } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
 import { sounds } from '../../utils/soundEffects';
+import { MicroHint } from '../../components/MicroHint';
 
 export const Scene03MemoryGame: React.FC = () => {
   const { config, nextScene } = useStory();
-  const [currentQ, setCurrentQ] = useState<1 | 2>(1);
+  const [currentQIndex, setCurrentQIndex] = useState<number>(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [wrongShakeId, setWrongShakeId] = useState<string | null>(null);
   const [isMorphingIntoBalloon, setIsMorphingIntoBalloon] = useState(false);
 
-  const activeQuestion = currentQ === 1 ? config.questions.q1 : config.questions.q2;
+  const questionsList = [
+    config.questions.q1,
+    config.questions.q2,
+    ...(config.questions.q3 ? [config.questions.q3] : []),
+  ];
+
+  const activeQuestion = questionsList[currentQIndex];
+  const isLastQuestion = currentQIndex === questionsList.length - 1;
 
   const handleSelect = (option: { id: string; isCorrect: boolean }) => {
     setSelectedId(option.id);
 
-    if (currentQ === 1) {
-      if (option.isCorrect) {
-        sounds.playCorrect();
-        setFeedback(config.questions.q1.correctFeedback);
-        confetti({
-          particleCount: 30,
-          spread: 50,
-          origin: { y: 0.65 },
-          colors: ['#f43f5e', '#fda4af', '#fcd34d'],
-        });
+    if (option.isCorrect) {
+      sounds.playCorrect();
+      setFeedback(activeQuestion.correctFeedback || 'You remembered. ❤️');
+      confetti({
+        particleCount: 28,
+        spread: 45,
+        origin: { y: 0.65 },
+        colors: ['#f43f5e', '#fda4af', '#fcd34d'],
+      });
 
-        // Fast advance to Question 2
+      if (!isLastQuestion) {
         setTimeout(() => {
           setSelectedId(null);
           setFeedback(null);
-          setCurrentQ(2);
+          setCurrentQIndex((prev) => prev + 1);
         }, 1100);
       } else {
-        sounds.playWrong();
-        setFeedback(config.questions.q1.wrongFeedback);
-        setWrongShakeId(option.id);
+        // Last question: Morph into floating balloon rising into Chapter 04!
         setTimeout(() => {
-          setWrongShakeId(null);
-        }, 500);
+          setIsMorphingIntoBalloon(true);
+          setTimeout(() => {
+            nextScene();
+          }, 850);
+        }, 1200);
       }
     } else {
-      // Question 2
-      sounds.playCorrect();
-      setFeedback(config.questions.q2.feedback);
-
-      // Transition: Correct answer becomes a floating balloon rising upward into Scene 04!
+      sounds.playWrong();
+      setFeedback(activeQuestion.wrongFeedback || 'Nope 😂 Try again.');
+      setWrongShakeId(option.id);
       setTimeout(() => {
-        setIsMorphingIntoBalloon(true);
-        setTimeout(() => {
-          nextScene();
-        }, 850);
-      }, 1200);
+        setWrongShakeId(null);
+      }, 500);
     }
   };
 
@@ -65,11 +68,11 @@ export const Scene03MemoryGame: React.FC = () => {
         {isMorphingIntoBalloon && (
           <motion.div
             initial={{ scale: 0.8, y: 0, opacity: 1 }}
-            animate={{ scale: 1.6, y: -250, opacity: 0.9 }}
+            animate={{ scale: 1.6, y: -260, opacity: 0.95 }}
             transition={{ duration: 0.85, ease: 'easeInOut' }}
             className="fixed inset-x-0 bottom-1/3 z-50 flex items-center justify-center pointer-events-none"
           >
-            <div className="h-28 w-24 rounded-full bg-gradient-to-tr from-rose-600 to-pink-400 shadow-[0_0_35px_rgba(244,63,94,0.8)] relative flex flex-col items-center">
+            <div className="h-28 w-24 rounded-full bg-gradient-to-tr from-rose-600 via-pink-500 to-rose-400 shadow-[0_0_35px_rgba(244,63,94,0.8)] relative flex flex-col items-center">
               <span className="absolute top-3 left-4 h-6 w-3 rounded-full bg-white/40 rotate-[-30deg]" />
               <div className="h-2 w-2 rotate-45 bg-rose-600 -bottom-1 absolute" />
             </div>
@@ -80,7 +83,9 @@ export const Scene03MemoryGame: React.FC = () => {
       <div className="pt-6 max-w-sm mx-auto w-full z-10">
         <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 px-3 py-1 text-[11px] text-rose-300 font-semibold mb-3">
           <Sparkles size={12} />
-          <span>QUESTION 0{currentQ} / 02</span>
+          <span>
+            QUESTION 0{currentQIndex + 1} / 0{questionsList.length}
+          </span>
         </div>
 
         <motion.h2
@@ -93,7 +98,7 @@ export const Scene03MemoryGame: React.FC = () => {
         </motion.h2>
       </div>
 
-      {/* 4 Interactive Choice Cards */}
+      {/* Choice Cards */}
       <div className="my-auto grid grid-cols-1 gap-2.5 max-w-sm mx-auto w-full py-2 z-10">
         {activeQuestion.options.map((opt, idx) => {
           const isSelected = selectedId === opt.id;
@@ -110,7 +115,7 @@ export const Scene03MemoryGame: React.FC = () => {
               }}
               transition={{ delay: idx * 0.08, x: { duration: 0.4 } }}
               onClick={() => handleSelect(opt)}
-              className={`flex items-center justify-between rounded-2xl p-3.5 sm:p-4 text-left border transition-all active:scale-[0.98] ${
+              className={`flex items-center justify-between rounded-2xl p-3.5 sm:p-4 text-left border transition-all active:scale-[0.98] cursor-pointer ${
                 isSelected
                   ? 'bg-rose-500/25 border-rose-400 text-white shadow-[0_0_20px_rgba(244,63,94,0.35)]'
                   : isWrong
@@ -137,9 +142,9 @@ export const Scene03MemoryGame: React.FC = () => {
       </div>
 
       {/* Feedback Banner */}
-      <div className="min-h-12 pb-6 flex items-center justify-center z-10">
+      <div className="min-h-14 pb-6 flex flex-col items-center justify-center z-10">
         <AnimatePresence mode="wait">
-          {feedback && (
+          {feedback ? (
             <motion.p
               key={feedback}
               initial={{ opacity: 0, y: 8 }}
@@ -149,6 +154,8 @@ export const Scene03MemoryGame: React.FC = () => {
             >
               {feedback}
             </motion.p>
+          ) : (
+            <MicroHint text="Choose the answer you remember" />
           )}
         </AnimatePresence>
       </div>

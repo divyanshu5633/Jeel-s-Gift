@@ -1,11 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Lock, Play, Pause, ArrowRight, Volume2 } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Lock, Play, Pause, ArrowRight, Volume2, Sparkles, Unlock } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
 import { sounds } from '../../utils/soundEffects';
 
-export const Scene08VoiceMessage: React.FC = () => {
-  const { config, nextScene, isPrivateUnlocked, setPrivateUnlocked, voicePlaying, voiceProgress, toggleVoicePlay } = useStory();
+export const Scene09VoiceMessage: React.FC = () => {
+  const {
+    config,
+    nextScene,
+    isPrivateUnlocked,
+    setPrivateUnlocked,
+    voicePlaying,
+    voiceProgress,
+    toggleVoicePlay,
+  } = useStory();
+
   const [progress, setProgress] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [isMeltToLetter, setIsMeltToLetter] = useState(false);
@@ -24,9 +33,9 @@ export const Scene08VoiceMessage: React.FC = () => {
           sounds.playUnlock();
           return 100;
         }
-        return prev + 6;
+        return prev + 12; // Faster, snappy ~0.7s unlock
       });
-    }, 80);
+    }, 60);
   };
 
   const endHold = () => {
@@ -36,7 +45,18 @@ export const Scene08VoiceMessage: React.FC = () => {
       clearInterval(holdIntervalRef.current);
       holdIntervalRef.current = null;
     }
-    setProgress(0);
+    // If they got past 50%, unlock it anyway to prevent frustration
+    if (progress > 40) {
+      setPrivateUnlocked(true);
+      sounds.playUnlock();
+    } else {
+      setProgress(0);
+    }
+  };
+
+  const handleInstantUnlock = () => {
+    sounds.playUnlock();
+    setPrivateUnlocked(true);
   };
 
   useEffect(() => {
@@ -46,14 +66,14 @@ export const Scene08VoiceMessage: React.FC = () => {
   }, []);
 
   const handleContinue = () => {
+    sounds.playPaperRustle();
     setIsMeltToLetter(true);
-    // Waveform melts into handwriting
     setTimeout(() => {
       nextScene();
-    }, 700);
+    }, 600);
   };
 
-  const size = 130;
+  const size = 132;
   const strokeWidth = 5;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -65,21 +85,26 @@ export const Scene08VoiceMessage: React.FC = () => {
 
   return (
     <div
-      className={`relative flex min-h-dvh flex-col items-center justify-between p-6 select-none bg-black text-center overflow-hidden transition-all duration-700 ${
+      className={`relative flex min-h-dvh flex-col items-center justify-between p-5 select-none bg-black text-center overflow-hidden transition-all duration-700 ${
         isMeltToLetter ? 'opacity-0 scale-98 filter blur-xs' : ''
       }`}
     >
       <div className="pt-6" />
 
       {!isPrivateUnlocked ? (
-        /* Part 1: Hold to Unlock */
+        /* Part 1: Hold to Unlock with Instant Tap fallback */
         <div className="my-auto flex flex-col items-center max-w-xs z-10">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 px-3 py-1 text-[11px] text-rose-300 font-semibold mb-3">
+            <Sparkles size={11} />
+            <span>CHAPTER 09 • AUDIO MEMO</span>
+          </div>
+
           <motion.div
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
-            className="mb-5 flex h-18 w-18 items-center justify-center rounded-3xl bg-neutral-900 border border-white/10 text-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.2)]"
+            className="mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-neutral-900 border border-white/10 text-rose-400 shadow-[0_0_30px_rgba(244,63,94,0.2)]"
           >
-            <Lock size={32} />
+            <Lock size={28} />
           </motion.div>
 
           <h2 className="font-cinzel text-2xl font-bold tracking-widest text-white">
@@ -89,8 +114,8 @@ export const Scene08VoiceMessage: React.FC = () => {
             This one isn’t meant to be read.
           </p>
 
-          <div className="mt-8 relative flex items-center justify-center">
-            <svg className="h-[130px] w-[130px] -rotate-90">
+          <div className="mt-7 relative flex items-center justify-center">
+            <svg className="h-[132px] w-[132px] -rotate-90">
               <circle
                 cx={size / 2}
                 cy={size / 2}
@@ -119,18 +144,28 @@ export const Scene08VoiceMessage: React.FC = () => {
               onMouseLeave={endHold}
               onTouchStart={startHold}
               onTouchEnd={endHold}
-              className={`absolute flex h-22 w-22 flex-col items-center justify-center rounded-full transition-transform active:scale-95 ${
+              onClick={handleInstantUnlock}
+              className={`absolute flex h-22 w-22 flex-col items-center justify-center rounded-full transition-transform active:scale-95 cursor-pointer touch-none select-none ${
                 isHolding
                   ? 'bg-rose-500 text-white shadow-[0_0_25px_rgba(244,63,94,0.7)] scale-95'
                   : 'bg-neutral-900 border border-white/20 text-neutral-200'
               }`}
             >
               <span className="text-[10px] font-bold uppercase tracking-widest">
-                {isHolding ? 'HOLDING...' : 'HOLD TO UNLOCK'}
+                {isHolding ? 'UNLOCKING...' : 'HOLD / TAP'}
               </span>
               <span className="text-[9px] opacity-70 mt-0.5">{progress}%</span>
             </button>
           </div>
+
+          {/* Instant Unlock fallback button so user is NEVER stuck */}
+          <button
+            onClick={handleInstantUnlock}
+            className="mt-6 flex items-center gap-1.5 text-xs text-rose-300 hover:text-white px-3 py-1.5 rounded-full bg-white/5 border border-white/10 active:scale-95 cursor-pointer"
+          >
+            <Unlock size={12} />
+            <span>Tap here to unlock immediately</span>
+          </button>
         </div>
       ) : (
         /* Part 2: Voice Audio Player */
@@ -140,7 +175,7 @@ export const Scene08VoiceMessage: React.FC = () => {
           className="my-auto flex flex-col items-center max-w-sm mx-auto w-full z-10"
         >
           <div className="flex items-center gap-2 text-xs uppercase tracking-widest text-rose-300 font-semibold mb-4">
-            <Volume2 size={14} className={voicePlaying ? 'animate-pulse' : ''} />
+            <Volume2 size={15} className={voicePlaying ? 'animate-pulse' : ''} />
             <span>A message from me</span>
           </div>
 
@@ -177,41 +212,38 @@ export const Scene08VoiceMessage: React.FC = () => {
             <div className="mt-4 flex items-center justify-center">
               <button
                 onClick={toggleVoicePlay}
-                className="flex h-13 w-13 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-[0_0_25px_rgba(244,63,94,0.4)] active:scale-95"
+                className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-600 text-white shadow-[0_0_25px_rgba(244,63,94,0.4)] active:scale-95 cursor-pointer"
+                aria-label={voicePlaying ? 'Pause Audio' : 'Play Audio'}
               >
-                {voicePlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
+                {voicePlaying ? <Pause size={22} /> : <Play size={22} className="ml-0.5" />}
               </button>
             </div>
           </div>
 
-          <p className="mt-4 text-xs text-neutral-400 italic max-w-xs">
+          <p className="mt-4 text-xs text-neutral-300 italic max-w-xs leading-relaxed px-2">
             {config.voiceMessage.transcript}
           </p>
         </motion.div>
       )}
 
-      {/* Completion Button */}
-      <div className="min-h-16 pb-6 max-w-xs mx-auto w-full z-10">
-        <AnimatePresence>
-          {isPrivateUnlocked && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="space-y-3 text-center"
-            >
-              <p className="text-xs text-rose-300 font-medium">
-                Some things are better heard than read.
-              </p>
-              <button
-                onClick={handleContinue}
-                className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 p-4 text-xs font-bold uppercase tracking-widest text-white shadow-lg active:scale-95 flex items-center justify-center gap-2"
-              >
-                <span>CONTINUE</span>
-                <ArrowRight size={14} />
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Persistent Proceed Button */}
+      <div className="pb-6 max-w-xs mx-auto w-full z-10 flex flex-col items-center gap-2">
+        {isPrivateUnlocked ? (
+          <button
+            onClick={handleContinue}
+            className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 p-4 text-xs font-bold uppercase tracking-widest text-white shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <span>CONTINUE TO HANDWRITTEN LETTER</span>
+            <ArrowRight size={14} />
+          </button>
+        ) : (
+          <button
+            onClick={handleInstantUnlock}
+            className="w-full rounded-full bg-white/10 hover:bg-white/15 text-neutral-300 border border-white/15 p-3.5 text-xs font-semibold uppercase tracking-wider active:scale-95 cursor-pointer"
+          >
+            <span>CONTINUE →</span>
+          </button>
+        )}
       </div>
     </div>
   );

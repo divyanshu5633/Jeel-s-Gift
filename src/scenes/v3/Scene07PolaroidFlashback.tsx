@@ -1,25 +1,24 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Heart, Maximize2, X } from 'lucide-react';
+import { Heart, X, Sparkles, ArrowRight } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
 import { sounds } from '../../utils/soundEffects';
 
-export const Scene06PolaroidFlashback: React.FC = () => {
+export const Scene07PolaroidFlashback: React.FC = () => {
   const { config, nextScene } = useStory();
   const [cards, setCards] = useState(config.polaroids);
   const [expandedPhoto, setExpandedPhoto] = useState<typeof config.polaroids[0] | null>(null);
   const [isScattering, setIsScattering] = useState(false);
 
-  const handleSwipeAway = () => {
+  const handleNextCard = () => {
     sounds.playCameraSnap();
     if (cards.length > 1) {
       setCards((prev) => prev.slice(1));
     } else {
-      // Third card dismissed: Scatter and transform into statistics!
       setIsScattering(true);
       setTimeout(() => {
         nextScene();
-      }, 700);
+      }, 650);
     }
   };
 
@@ -41,7 +40,8 @@ export const Scene06PolaroidFlashback: React.FC = () => {
             >
               <button
                 onClick={() => setExpandedPhoto(null)}
-                className="absolute top-4 right-4 flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-white"
+                className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white cursor-pointer active:scale-95"
+                aria-label="Close Lightbox"
               >
                 <X size={16} />
               </button>
@@ -53,7 +53,9 @@ export const Scene06PolaroidFlashback: React.FC = () => {
               <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-rose-400">
                 {expandedPhoto.date}
               </span>
-              <p className="mt-1 text-xs text-neutral-300 italic">"{expandedPhoto.caption}"</p>
+              <p className="mt-1 text-xs text-neutral-300 italic leading-relaxed">
+                "{expandedPhoto.caption}"
+              </p>
             </div>
           </motion.div>
         )}
@@ -61,16 +63,25 @@ export const Scene06PolaroidFlashback: React.FC = () => {
 
       {/* Header */}
       <div className="pt-6 text-center max-w-sm mx-auto w-full z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 px-3 py-1 text-[11px] text-rose-300 font-semibold mb-2"
+        >
+          <Sparkles size={12} />
+          <span>CHAPTER 07 • PHYSICAL POLAROIDS</span>
+        </motion.div>
+
         <h2 className="font-cinzel text-2xl sm:text-3xl font-bold tracking-widest text-white">
           POLAROID FLASHBACK
         </h2>
         <p className="mt-1 text-xs text-neutral-400 italic">
-          Swipe cards away ({cards.length} left)
+          Tap card or button to advance ({cards.length} snapshots remaining)
         </p>
       </div>
 
-      {/* Polaroid Deck (Stack of 3) */}
-      <div className="relative my-auto flex h-[360px] w-full max-w-xs mx-auto items-center justify-center z-10">
+      {/* Stacked Polaroid Deck - Click or drag to advance */}
+      <div className="relative my-auto flex h-[370px] w-full max-w-xs mx-auto items-center justify-center z-10">
         {cards.map((polaroid, index) => {
           const isTop = index === 0;
 
@@ -80,17 +91,20 @@ export const Scene06PolaroidFlashback: React.FC = () => {
               drag={isTop ? 'x' : false}
               dragConstraints={{ left: 0, right: 0 }}
               onDragEnd={(_, info) => {
-                if (Math.abs(info.offset.x) > 80) {
-                  handleSwipeAway();
+                if (Math.abs(info.offset.x) > 60) {
+                  handleNextCard();
                 }
+              }}
+              onClick={() => {
+                if (isTop) handleNextCard();
               }}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={
                 isScattering
                   ? {
-                      x: index % 2 === 0 ? 300 : -300,
-                      y: 200,
-                      rotate: index * 25,
+                      x: index % 2 === 0 ? 350 : -350,
+                      y: 240,
+                      rotate: index * 30,
                       opacity: 0,
                     }
                   : {
@@ -100,28 +114,19 @@ export const Scene06PolaroidFlashback: React.FC = () => {
                       opacity: 1 - index * 0.25,
                     }
               }
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.35 }}
               style={{ zIndex: 10 - index }}
-              className="absolute w-full rounded-3xl bg-white p-3.5 pb-6 text-neutral-900 shadow-2xl border border-neutral-100 cursor-grab active:cursor-grabbing"
+              className="absolute w-full rounded-3xl bg-white p-3.5 pb-6 text-neutral-900 shadow-2xl border border-neutral-100 cursor-pointer touch-none select-none"
             >
-              <div
-                className="relative aspect-square w-full overflow-hidden rounded-2xl bg-neutral-900 cursor-pointer group"
-                onClick={() => setExpandedPhoto(polaroid)}
-              >
+              <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-neutral-900 pointer-events-none">
                 <img
                   src={polaroid.image}
                   alt={polaroid.memoryNumber}
-                  className="h-full w-full object-cover pointer-events-none"
+                  className="h-full w-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <span className="flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[11px] text-white backdrop-blur-sm">
-                    <Maximize2 size={11} />
-                    <span>View</span>
-                  </span>
-                </div>
               </div>
 
-              <div className="mt-3 text-center">
+              <div className="mt-3 text-center pointer-events-none">
                 <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold text-rose-600 uppercase tracking-wider">
                   <Heart size={10} className="fill-rose-600" />
                   <span>{polaroid.date}</span>
@@ -138,13 +143,14 @@ export const Scene06PolaroidFlashback: React.FC = () => {
         })}
       </div>
 
-      {/* Swipe Button / Helper */}
-      <div className="pb-6 max-w-xs mx-auto w-full z-10">
+      {/* Action Button - Always visible and responsive */}
+      <div className="pb-6 max-w-xs mx-auto w-full z-10 flex flex-col items-center gap-2">
         <button
-          onClick={handleSwipeAway}
-          className="w-full rounded-full bg-white/10 hover:bg-white/15 border border-white/15 py-3.5 text-xs uppercase tracking-widest text-neutral-200 transition-all active:scale-95 flex items-center justify-center gap-2"
+          onClick={handleNextCard}
+          className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 p-4 text-xs font-bold uppercase tracking-widest text-white shadow-lg active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>SWIPE POLAROID</span>
+          <span>{cards.length > 1 ? `NEXT SNAPSHOT (${cards.length} LEFT)` : 'CONTINUE TO OUR DATA'}</span>
+          <ArrowRight size={15} />
         </button>
       </div>
     </div>

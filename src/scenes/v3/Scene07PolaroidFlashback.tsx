@@ -48,6 +48,7 @@ export const Scene07PolaroidFlashback: React.FC = () => {
               <img
                 src={expandedPhoto.image}
                 alt={expandedPhoto.memoryNumber}
+                style={{ objectPosition: expandedPhoto.imagePosition || 'center 20%' }}
                 className="aspect-square w-full object-cover rounded-2xl"
               />
               <span className="mt-3 inline-block text-[10px] font-bold uppercase tracking-widest text-rose-400">
@@ -122,6 +123,7 @@ export const Scene07PolaroidFlashback: React.FC = () => {
                 <img
                   src={polaroid.image}
                   alt={polaroid.memoryNumber}
+                  style={{ objectPosition: polaroid.imagePosition || 'center 20%' }}
                   className="h-full w-full object-cover"
                 />
               </div>

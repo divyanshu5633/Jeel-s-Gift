@@ -81,7 +81,11 @@ export const Scene09VoiceMessage: React.FC = () => {
 
   const totalDuration = config.voiceMessage.durationSeconds;
   const currentSecs = Math.floor(totalDuration * voiceProgress);
-  const formatTime = (secs: number) => `0:${secs < 10 ? '0' : ''}${secs}`;
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
 
   return (
     <div
@@ -181,6 +185,22 @@ export const Scene09VoiceMessage: React.FC = () => {
 
           {/* Waveform Card */}
           <div className="w-full rounded-3xl bg-[#141220] border border-white/10 p-5 shadow-2xl backdrop-blur-md">
+            {/* Sender header with personal avatar */}
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
+              <img
+                src={config.voiceMessage.avatar}
+                alt={config.voiceMessage.senderName}
+                className="w-11 h-11 rounded-full object-cover border border-rose-500/30 shadow-md"
+              />
+              <div className="text-left flex-1 min-w-0">
+                <p className="text-xs font-bold text-white tracking-wide truncate">{config.voiceMessage.senderName}</p>
+                <p className="text-[10px] text-rose-300 font-mono flex items-center gap-1.5">
+                  <span className={`inline-block w-1.5 h-1.5 rounded-full ${voicePlaying ? 'bg-rose-400 animate-pulse' : 'bg-neutral-500'}`} />
+                  <span>{voicePlaying ? 'Playing voice note' : 'Voice memo • For Jeelu'}</span>
+                </p>
+              </div>
+            </div>
+
             <div className="flex h-14 items-center justify-between gap-1 px-1">
               {config.voiceMessage.waveformBars.map((height, idx) => {
                 const barProgress = idx / config.voiceMessage.waveformBars.length;

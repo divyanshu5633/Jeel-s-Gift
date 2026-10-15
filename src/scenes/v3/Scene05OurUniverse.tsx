@@ -91,11 +91,12 @@ export const Scene05OurUniverse: React.FC = () => {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
-                className="relative aspect-4/3 w-full overflow-hidden rounded-3xl border border-white/15 shadow-2xl bg-neutral-900"
+                className="relative aspect-[4/5] max-h-[48vh] w-full max-w-[320px] overflow-hidden rounded-3xl border border-white/15 shadow-2xl bg-neutral-900 mx-auto"
               >
                 <img
                   src={activeStar.image}
                   alt={activeStar.label}
+                  style={{ objectPosition: activeStar.imagePosition || 'center 20%' }}
                   className="h-full w-full object-cover"
                 />
                 <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-rose-400 backdrop-blur-sm">

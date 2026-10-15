@@ -167,7 +167,8 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           setVoicePlaying(false);
           setVoiceProgress(1);
           stopVoiceRef.current = null;
-        }
+        },
+        storyConfig.voiceMessage.audioUrl
       );
     }
   };

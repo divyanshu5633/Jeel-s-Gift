@@ -19,6 +19,7 @@ export interface UniverseStar {
   x: number;
   y: number;
   color: string;
+  imagePosition?: string;
 }
 
 export interface StoryVaultItem {
@@ -33,6 +34,7 @@ export interface StoryVaultItem {
   fullImage?: string;
   story: string;
   tag?: string;
+  imagePosition?: string;
 }
 
 export interface PolaroidMemory {
@@ -42,6 +44,7 @@ export interface PolaroidMemory {
   caption: string;
   image: string;
   rotation: number;
+  imagePosition?: string;
 }
 
 export interface StatisticCounter {
@@ -166,6 +169,7 @@ export interface StoryConfigV3 {
     mainHeading: string;
     youHeading: string;
     photo: string;
+    photoPosition?: string;
     birthdayWish: string;
     signature: string;
     whisperAudioNote?: string;

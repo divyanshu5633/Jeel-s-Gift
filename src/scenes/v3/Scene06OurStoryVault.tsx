@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Lock, Unlock, Sparkles, ArrowRight, X, Heart, ShieldAlert } from 'lucide-react';
+import { Lock, Unlock, Sparkles, ArrowRight, X, Heart, ShieldAlert, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
 import { sounds } from '../../utils/soundEffects';
 import type { StoryVaultItem } from '../../types';
@@ -9,6 +9,8 @@ export const Scene06OurStoryVault: React.FC = () => {
   const { config, nextScene, unlockedVaultItems, unlockVaultItem } = useStory();
   const [selectedItem, setSelectedItem] = useState<StoryVaultItem | null>(null);
   const [lockedNotice, setLockedNotice] = useState<string | null>(null);
+
+  const currentIndex = selectedItem ? config.storyVault.findIndex(i => i.id === selectedItem.id) : -1;
 
   const handleOpenItem = (item: StoryVaultItem) => {
     if (item.isLocked && !unlockedVaultItems.includes(item.id)) {
@@ -23,13 +25,42 @@ export const Scene06OurStoryVault: React.FC = () => {
     setSelectedItem(item);
   };
 
+  const handlePrevItem = () => {
+    if (currentIndex > 0) {
+      const prev = config.storyVault[currentIndex - 1];
+      unlockVaultItem(prev.id);
+      setSelectedItem(prev);
+      sounds.playUnlock();
+    }
+  };
+
+  const handleNextItem = () => {
+    if (currentIndex < config.storyVault.length - 1) {
+      const next = config.storyVault[currentIndex + 1];
+      unlockVaultItem(next.id);
+      setSelectedItem(next);
+      sounds.playUnlock();
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!selectedItem) return;
+      if (e.key === 'Escape') setSelectedItem(null);
+      if (e.key === 'ArrowLeft') handlePrevItem();
+      if (e.key === 'ArrowRight') handleNextItem();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedItem, currentIndex]);
+
   const handleContinue = () => {
     sounds.playCameraSnap();
     nextScene();
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col justify-between p-4 sm:p-5 select-none bg-radial from-[#130d22] via-[#080612] to-black pb-24">
+    <div className="relative flex min-h-dvh flex-col justify-between p-4 sm:p-5 select-none bg-radial from-[#130d22] via-[#080612] to-black pb-28">
       {/* Header */}
       <div className="pt-6 text-center max-w-sm mx-auto w-full z-10">
         <motion.div
@@ -56,7 +87,7 @@ export const Scene06OurStoryVault: React.FC = () => {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="my-2 max-w-sm mx-auto w-full rounded-xl bg-rose-950/80 border border-rose-500/50 p-3 text-center text-xs text-rose-200 flex items-center justify-center gap-2 shadow-xl backdrop-blur-md"
+            className="my-2 max-w-sm mx-auto w-full rounded-xl bg-rose-950/80 border border-rose-500/50 p-3 text-center text-xs text-rose-200 flex items-center justify-center gap-2 shadow-xl backdrop-blur-md z-20"
           >
             <ShieldAlert size={16} className="text-rose-400 shrink-0" />
             <span>{lockedNotice}</span>
@@ -64,8 +95,8 @@ export const Scene06OurStoryVault: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Vault Cards Grid */}
-      <div className="my-auto grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-sm sm:max-w-md mx-auto w-full py-4 z-10">
+      {/* Vault Cards Grid (Consistently 2-column dossier style) */}
+      <div className="my-auto grid grid-cols-2 gap-2.5 sm:gap-3.5 max-w-sm sm:max-w-md mx-auto w-full py-4 z-10">
         {config.storyVault.map((item, idx) => {
           const isItemUnlocked = !item.isLocked || unlockedVaultItems.includes(item.id);
 
@@ -74,39 +105,39 @@ export const Scene06OurStoryVault: React.FC = () => {
               key={item.id}
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.06 }}
+              transition={{ delay: idx * 0.05 }}
               onClick={() => handleOpenItem(item)}
-              className={`rounded-2xl p-4 border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between min-h-[110px] active:scale-[0.98] ${
+              className={`rounded-2xl p-3.5 sm:p-4 border transition-all cursor-pointer relative overflow-hidden flex flex-col justify-between min-h-[125px] sm:min-h-[135px] active:scale-[0.98] ${
                 isItemUnlocked
-                  ? 'bg-[#151125]/90 border-white/10 hover:border-rose-400/40 shadow-lg'
+                  ? 'bg-[#151125]/90 border-white/10 hover:border-rose-400/40 shadow-lg hover:shadow-rose-500/10'
                   : 'bg-[#0e0c18]/80 border-white/5 opacity-80'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-rose-400">
+                <span className="text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.16em] sm:tracking-[0.2em] text-rose-400 truncate pr-1">
                   {item.category}
                 </span>
                 <span
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs ${
+                  className={`flex h-5 w-5 sm:h-6 sm:w-6 shrink-0 items-center justify-center rounded-full text-xs ${
                     isItemUnlocked ? 'bg-emerald-500/20 text-emerald-300' : 'bg-rose-500/20 text-rose-400'
                   }`}
                 >
-                  {isItemUnlocked ? <Unlock size={12} /> : <Lock size={12} />}
+                  {isItemUnlocked ? <Unlock size={11} /> : <Lock size={11} />}
                 </span>
               </div>
 
-              <div className="mt-2">
-                <h3 className="font-cinzel text-sm sm:text-base font-bold text-white leading-snug">
+              <div className="my-1.5">
+                <h3 className="font-cinzel text-xs sm:text-sm font-bold text-white leading-tight uppercase line-clamp-2">
                   {item.title}
                 </h3>
-                <p className="mt-0.5 text-[11px] text-neutral-400 line-clamp-1 italic">
+                <p className="mt-1 text-[10px] sm:text-[11px] text-neutral-400 line-clamp-1 italic">
                   {item.subtitle}
                 </p>
               </div>
 
-              <div className="mt-2 flex items-center justify-between text-[10px] text-neutral-500">
-                <span>{item.date}</span>
-                <span className="text-rose-300/80 font-medium">{item.tag || 'Dossier'}</span>
+              <div className="flex items-center justify-between text-[9px] sm:text-[10px] text-neutral-500 border-t border-white/5 pt-1.5">
+                <span className="truncate">{item.date}</span>
+                <span className="text-rose-300/80 font-medium shrink-0 ml-1">{item.tag || 'Dossier'}</span>
               </div>
             </motion.div>
           );
@@ -121,58 +152,91 @@ export const Scene06OurStoryVault: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setSelectedItem(null);
+            }}
           >
             <motion.div
-              initial={{ scale: 0.85, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.85, y: 20 }}
+              key={selectedItem.id}
+              initial={{ scale: 0.9, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.9, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
               className="w-full max-w-sm rounded-3xl bg-[#171328] border border-rose-500/30 p-5 shadow-2xl relative overflow-hidden"
             >
               {/* Close Button */}
               <button
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white cursor-pointer active:scale-95"
+                className="absolute top-4 right-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer active:scale-95 transition-colors z-10"
                 aria-label="Close Dossier"
               >
                 <X size={16} />
               </button>
 
-              <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-rose-400 mb-1">
+              <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-widest text-rose-400 mb-1 pr-8">
                 <span>{selectedItem.category}</span>
-                <span>•</span>
-                <span>{selectedItem.date}</span>
+                <span className="text-neutral-500 font-mono">
+                  {currentIndex >= 0 ? `${currentIndex + 1} / ${config.storyVault.length}` : ''}
+                </span>
               </div>
 
-              <h3 className="font-cinzel text-xl font-bold text-white mb-2">
+              <div className="text-[11px] text-neutral-400 font-medium mb-1">
+                {selectedItem.date}
+              </div>
+
+              <h3 className="font-cinzel text-lg sm:text-xl font-bold text-white mb-2">
                 {selectedItem.title}
               </h3>
 
               {selectedItem.previewImage && (
-                <div className="aspect-16/9 w-full rounded-2xl overflow-hidden my-3 border border-white/10 bg-black">
+                <div className="aspect-[4/3] max-h-[36vh] w-full rounded-2xl overflow-hidden my-3 border border-white/10 bg-black shadow-inner">
                   <img
                     src={selectedItem.previewImage}
                     alt={selectedItem.title}
+                    style={{ objectPosition: selectedItem.imagePosition || 'center 20%' }}
                     className="h-full w-full object-cover"
                   />
                 </div>
               )}
 
-              <p className="text-xs sm:text-sm text-neutral-200 italic leading-relaxed mt-2 bg-white/5 p-3 rounded-xl border border-white/5">
+              <p className="text-xs sm:text-sm text-neutral-200 italic leading-relaxed mt-2 bg-white/5 p-3.5 rounded-xl border border-white/5">
                 "{selectedItem.story}"
               </p>
 
-              <div className="mt-4 flex items-center justify-between">
-                <span className="flex items-center gap-1 text-[11px] text-rose-300">
-                  <Heart size={14} className="fill-rose-400 text-rose-400" />
-                  <span>Archived memory</span>
-                </span>
+              {/* Navigation and Actions */}
+              <div className="mt-4 pt-2 border-t border-white/10 flex items-center justify-between">
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={handlePrevItem}
+                    disabled={currentIndex <= 0}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-neutral-300 transition-colors"
+                    title="Previous Memory"
+                  >
+                    <ChevronLeft size={16} />
+                  </button>
+                  <button
+                    onClick={handleNextItem}
+                    disabled={currentIndex >= config.storyVault.length - 1}
+                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 hover:bg-white/10 disabled:opacity-30 disabled:cursor-not-allowed text-neutral-300 transition-colors"
+                    title="Next Memory"
+                  >
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
 
-                <button
-                  onClick={() => setSelectedItem(null)}
-                  className="rounded-full bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 px-4 py-1.5 text-xs font-semibold text-rose-200 cursor-pointer"
-                >
-                  Close
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="flex items-center gap-1 text-[11px] text-rose-300">
+                    <Heart size={13} className="fill-rose-400 text-rose-400" />
+                    <span>Archived</span>
+                  </span>
+
+                  <button
+                    onClick={() => setSelectedItem(null)}
+                    className="rounded-full bg-rose-500/20 hover:bg-rose-500/30 border border-rose-500/30 px-3.5 py-1 text-xs font-semibold text-rose-200 cursor-pointer transition-colors"
+                  >
+                    Close
+                  </button>
+                </div>
               </div>
             </motion.div>
           </motion.div>

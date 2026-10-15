@@ -108,10 +108,11 @@ export const Scene14FinalReveal: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="w-full max-w-[320px] rounded-3xl bg-white p-4 pb-6 text-neutral-900 shadow-2xl border border-neutral-100"
           >
-            <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-neutral-900">
+            <div className="relative aspect-[4/5] max-h-[46vh] w-full overflow-hidden rounded-2xl bg-neutral-900">
               <img
                 src={config.finalReveal.photo}
                 alt="Finale"
+                style={{ objectPosition: config.finalReveal.photoPosition || 'center 38%' }}
                 className="h-full w-full object-cover"
               />
               <div className="absolute top-2.5 right-2.5 flex h-8 w-8 items-center justify-center rounded-full bg-black/45 text-rose-500">

@@ -6,6 +6,7 @@ class SoundEngine {
   private isAmbientPlaying = false;
   private ambientInterval: number | null = null;
   private isMuted = false;
+  private currentVoiceAudio: HTMLAudioElement | null = null;
 
   private initCtx() {
     if (!this.ctx) {
@@ -21,6 +22,9 @@ class SoundEngine {
     this.isMuted = !this.isMuted;
     if (this.ambientGain) {
       this.ambientGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.15, this.ctx?.currentTime || 0, 0.1);
+    }
+    if (this.currentVoiceAudio) {
+      this.currentVoiceAudio.muted = this.isMuted;
     }
     return this.isMuted;
   }
@@ -408,8 +412,71 @@ class SoundEngine {
     });
   }
 
-  // Voice player synthesis (rich, expressive spoken-cadence tone generator)
-  public playVoiceAudio(durationSeconds: number, onProgress: (progress: number) => void, onEnd: () => void): () => void {
+  // Voice player: plays real audio file if audioUrl is provided, or rich synthetic tone fallback
+  public playVoiceAudio(
+    durationSeconds: number,
+    onProgress: (progress: number) => void,
+    onEnd: () => void,
+    audioUrl?: string
+  ): () => void {
+    if (this.currentVoiceAudio) {
+      this.currentVoiceAudio.pause();
+      this.currentVoiceAudio = null;
+    }
+
+    if (audioUrl) {
+      try {
+        const audio = new Audio(audioUrl);
+        this.currentVoiceAudio = audio;
+        audio.muted = this.isMuted;
+
+        // Duck ambient music while voice note plays
+        if (this.ambientGain && this.ctx) {
+          this.ambientGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.03, this.ctx.currentTime, 0.3);
+        }
+
+        const restoreAmbient = () => {
+          if (this.ambientGain && this.ctx) {
+            this.ambientGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.12, this.ctx.currentTime, 0.5);
+          }
+        };
+
+        const handleTimeUpdate = () => {
+          const dur = audio.duration && !isNaN(audio.duration) && audio.duration > 0 ? audio.duration : durationSeconds;
+          const prog = Math.min(1, Math.max(0, audio.currentTime / dur));
+          onProgress(prog);
+        };
+
+        const handleEnded = () => {
+          restoreAmbient();
+          if (this.currentVoiceAudio === audio) {
+            this.currentVoiceAudio = null;
+          }
+          onEnd();
+        };
+
+        audio.addEventListener('timeupdate', handleTimeUpdate);
+        audio.addEventListener('ended', handleEnded);
+
+        audio.play().catch((err) => {
+          console.warn('Real audio playback blocked or failed:', err);
+        });
+
+        return () => {
+          audio.removeEventListener('timeupdate', handleTimeUpdate);
+          audio.removeEventListener('ended', handleEnded);
+          audio.pause();
+          restoreAmbient();
+          if (this.currentVoiceAudio === audio) {
+            this.currentVoiceAudio = null;
+          }
+        };
+      } catch (e) {
+        console.error('Audio initialization error, falling back to synth:', e);
+      }
+    }
+
+    // Synthesizer fallback
     this.initCtx();
     if (!this.ctx) {
       onEnd();

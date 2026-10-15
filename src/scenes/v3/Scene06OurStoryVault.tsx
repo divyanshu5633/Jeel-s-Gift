@@ -151,7 +151,7 @@ export const Scene06OurStoryVault: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-sm"
             onClick={(e) => {
               if (e.target === e.currentTarget) setSelectedItem(null);
             }}
@@ -162,7 +162,7 @@ export const Scene06OurStoryVault: React.FC = () => {
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.9, y: 20, opacity: 0 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="w-full max-w-sm rounded-3xl bg-[#171328] border border-rose-500/30 p-5 shadow-2xl relative overflow-hidden"
+              className="w-full max-w-sm rounded-3xl bg-[#171328] border border-rose-500/30 p-5 shadow-2xl relative overflow-hidden transform-gpu will-change-transform"
             >
               {/* Close Button */}
               <button
@@ -193,6 +193,8 @@ export const Scene06OurStoryVault: React.FC = () => {
                   <img
                     src={selectedItem.previewImage}
                     alt={selectedItem.title}
+                    loading="lazy"
+                    decoding="async"
                     style={{ objectPosition: selectedItem.imagePosition || 'center 20%' }}
                     className="h-full w-full object-cover"
                   />

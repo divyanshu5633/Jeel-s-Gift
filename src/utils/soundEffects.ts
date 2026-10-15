@@ -412,6 +412,26 @@ class SoundEngine {
     });
   }
 
+  // Preload voice audio metadata only when Scene 8/9 approaches, avoiding early downloads
+  public preloadVoiceAudio(audioUrl?: string) {
+    if (!audioUrl || this.currentVoiceAudio) return;
+    try {
+      const audio = new Audio();
+      audio.preload = 'metadata';
+      audio.src = audioUrl;
+      this.currentVoiceAudio = audio;
+    } catch {
+      // Ignored
+    }
+  }
+
+  public stopVoiceAudio() {
+    if (this.currentVoiceAudio) {
+      this.currentVoiceAudio.pause();
+      this.currentVoiceAudio = null;
+    }
+  }
+
   // Voice player: plays real audio file if audioUrl is provided, or rich synthetic tone fallback
   public playVoiceAudio(
     durationSeconds: number,
@@ -428,6 +448,7 @@ class SoundEngine {
       try {
         const audio = new Audio(audioUrl);
         this.currentVoiceAudio = audio;
+        audio.preload = 'auto';
         audio.muted = this.isMuted;
 
         // Duck ambient music while voice note plays

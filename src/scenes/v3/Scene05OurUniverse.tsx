@@ -43,17 +43,17 @@ export const Scene05OurUniverse: React.FC = () => {
 
   return (
     <div className="relative flex min-h-dvh flex-col justify-between p-6 select-none bg-radial from-[#0c0818] via-[#04030a] to-black overflow-hidden">
-      {/* Background Starfield */}
+      {/* Background Starfield - Optimized with gentle opacity pulse instead of continuous pings */}
       <div className="pointer-events-none absolute inset-0">
-        {Array.from({ length: 45 }).map((_, i) => (
+        {Array.from({ length: 16 }).map((_, i) => (
           <div
             key={i}
             style={{
-              top: `${(i * 17) % 100}%`,
-              left: `${(i * 23) % 100}%`,
-              animationDelay: `${(i % 5) * 0.7}s`,
+              top: `${(i * 19 + 7) % 94}%`,
+              left: `${(i * 29 + 11) % 92}%`,
+              animationDelay: `${(i % 4) * 0.9}s`,
             }}
-            className="absolute h-1 w-1 rounded-full bg-white/40 animate-ping"
+            className="absolute h-1 w-1 rounded-full bg-white/50 animate-pulse will-change-[opacity]"
           />
         ))}
       </div>
@@ -62,14 +62,14 @@ export const Scene05OurUniverse: React.FC = () => {
       <AnimatePresence>
         {activeStar && (
           <motion.div
-            initial={{ scale: 0.15, opacity: 0 }}
+            initial={{ scale: 0.85, opacity: 0 }}
             animate={{
-              scale: isTransitioning ? 0.8 : 1,
+              scale: isTransitioning ? 0.9 : 1,
               opacity: isTransitioning ? 0 : 1,
             }}
-            exit={{ scale: 0.2, opacity: 0 }}
-            transition={{ duration: 0.45, ease: 'easeOut' }}
-            className="fixed inset-0 z-50 flex flex-col justify-between bg-black/95 p-4 sm:p-6 backdrop-blur-2xl"
+            exit={{ scale: 0.85, opacity: 0 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            className="fixed inset-0 z-50 flex flex-col justify-between bg-black/95 p-4 sm:p-6 backdrop-blur-sm transform-gpu will-change-transform"
           >
             {/* Top Bar */}
             <div className="flex items-center justify-between z-10 pt-2 max-w-sm mx-auto w-full">
@@ -88,7 +88,7 @@ export const Scene05OurUniverse: React.FC = () => {
             {/* Central Memory Window */}
             <div className="my-auto flex flex-col items-center max-w-sm mx-auto w-full">
               <motion.div
-                initial={{ y: 20, opacity: 0 }}
+                initial={{ y: 15, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.1 }}
                 className="relative aspect-[4/5] max-h-[48vh] w-full max-w-[320px] overflow-hidden rounded-3xl border border-white/15 shadow-2xl bg-neutral-900 mx-auto"
@@ -96,10 +96,12 @@ export const Scene05OurUniverse: React.FC = () => {
                 <img
                   src={activeStar.image}
                   alt={activeStar.label}
+                  loading="lazy"
+                  decoding="async"
                   style={{ objectPosition: activeStar.imagePosition || 'center 20%' }}
                   className="h-full w-full object-cover"
                 />
-                <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-rose-400 backdrop-blur-sm">
+                <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/50 text-rose-400 backdrop-blur-xs">
                   <Heart size={16} className="fill-rose-400 animate-pulse" />
                 </div>
               </motion.div>
@@ -186,19 +188,20 @@ export const Scene05OurUniverse: React.FC = () => {
           >
             <motion.div
               animate={{
-                scale: [1, 1.35, 1],
-                opacity: [0.75, 1, 0.75],
+                scale: [1, 1.25, 1],
+                opacity: [0.8, 1, 0.8],
               }}
               transition={{
                 repeat: Infinity,
-                duration: 2.2 + (idx % 3) * 0.4,
+                duration: 2.4 + (idx % 3) * 0.4,
+                ease: 'easeInOut',
               }}
-              className="flex items-center justify-center p-3"
+              className="flex items-center justify-center p-3 will-change-transform transform-gpu"
             >
               <div
                 style={{
                   backgroundColor: star.color,
-                  boxShadow: `0 0 18px 5px ${star.color}`,
+                  boxShadow: `0 0 14px 3px ${star.color}`,
                 }}
                 className="h-3.5 w-3.5 rounded-full transition-transform group-hover:scale-150"
               />

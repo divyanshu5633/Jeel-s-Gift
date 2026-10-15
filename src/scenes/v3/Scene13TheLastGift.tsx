@@ -167,7 +167,7 @@ export const Scene13TheLastGift: React.FC = () => {
                   ],
                 }}
                 transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                className="relative z-10 mt-14 flex items-center justify-center"
+                className="relative z-10 mt-14 flex items-center justify-center will-change-transform transform-gpu"
               >
                 <div className="h-16 w-16 rounded-full bg-gradient-to-tr from-slate-300 via-white to-slate-200 border-2 border-white/90 shadow-2xl flex items-center justify-center">
                   <Heart size={26} className="text-rose-500 fill-rose-500" />

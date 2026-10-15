@@ -62,8 +62,11 @@ export const Scene09VoiceMessage: React.FC = () => {
   useEffect(() => {
     return () => {
       if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
+      if (voicePlaying) {
+        toggleVoicePlay();
+      }
     };
-  }, []);
+  }, [voicePlaying, toggleVoicePlay]);
 
   const handleContinue = () => {
     sounds.playPaperRustle();
@@ -184,12 +187,14 @@ export const Scene09VoiceMessage: React.FC = () => {
           </div>
 
           {/* Waveform Card */}
-          <div className="w-full rounded-3xl bg-[#141220] border border-white/10 p-5 shadow-2xl backdrop-blur-md">
+          <div className="w-full rounded-3xl bg-[#141220] border border-white/10 p-5 shadow-2xl backdrop-blur-sm">
             {/* Sender header with personal avatar */}
             <div className="flex items-center gap-3 mb-4 pb-3 border-b border-white/10">
               <img
                 src={config.voiceMessage.avatar}
                 alt={config.voiceMessage.senderName}
+                loading="lazy"
+                decoding="async"
                 className="w-11 h-11 rounded-full object-cover border border-rose-500/30 shadow-md"
               />
               <div className="text-left flex-1 min-w-0">
@@ -201,7 +206,7 @@ export const Scene09VoiceMessage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex h-14 items-center justify-between gap-1 px-1">
+            <div className="flex h-14 items-end justify-between gap-1 px-1">
               {config.voiceMessage.waveformBars.map((height, idx) => {
                 const barProgress = idx / config.voiceMessage.waveformBars.length;
                 const isPassed = voiceProgress >= barProgress;
@@ -210,15 +215,19 @@ export const Scene09VoiceMessage: React.FC = () => {
                   <motion.div
                     key={idx}
                     animate={{
-                      height: voicePlaying
-                        ? `${Math.max(16, height * (0.6 + Math.random() * 0.5))}%`
-                        : `${height}%`,
+                      scaleY: voicePlaying ? [1, 1.25, 0.75, 1.1, 1] : 1,
                     }}
-                    transition={{ duration: 0.15 }}
+                    transition={{
+                      duration: 0.35 + (idx % 4) * 0.08,
+                      repeat: voicePlaying ? Infinity : 0,
+                      ease: 'easeInOut',
+                    }}
                     style={{
+                      height: `${height}%`,
+                      transformOrigin: 'bottom center',
                       backgroundColor: isPassed ? '#f43f5e' : 'rgba(255, 255, 255, 0.15)',
                     }}
-                    className="w-1.5 rounded-full"
+                    className="w-1.5 rounded-full will-change-transform transform-gpu"
                   />
                 );
               })}

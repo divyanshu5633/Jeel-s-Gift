@@ -32,7 +32,7 @@ export const Scene07PolaroidFlashback: React.FC = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setExpandedPhoto(null)}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-xl"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/92 p-4 backdrop-blur-sm"
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -48,6 +48,8 @@ export const Scene07PolaroidFlashback: React.FC = () => {
               <img
                 src={expandedPhoto.image}
                 alt={expandedPhoto.memoryNumber}
+                loading="lazy"
+                decoding="async"
                 style={{ objectPosition: expandedPhoto.imagePosition || 'center 20%' }}
                 className="aspect-square w-full object-cover rounded-2xl"
               />
@@ -117,12 +119,14 @@ export const Scene07PolaroidFlashback: React.FC = () => {
               }
               transition={{ duration: 0.35 }}
               style={{ zIndex: 10 - index }}
-              className="absolute w-full rounded-3xl bg-white p-3.5 pb-6 text-neutral-900 shadow-2xl border border-neutral-100 cursor-pointer touch-none select-none"
+              className="absolute w-full rounded-3xl bg-white p-3.5 pb-6 text-neutral-900 shadow-2xl border border-neutral-100 cursor-pointer touch-none select-none will-change-transform transform-gpu"
             >
               <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-neutral-900 pointer-events-none">
                 <img
                   src={polaroid.image}
                   alt={polaroid.memoryNumber}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
                   style={{ objectPosition: polaroid.imagePosition || 'center 20%' }}
                   className="h-full w-full object-cover"
                 />

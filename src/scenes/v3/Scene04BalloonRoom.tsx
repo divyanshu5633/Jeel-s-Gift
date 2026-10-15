@@ -19,12 +19,12 @@ export const Scene04BalloonRoom: React.FC = () => {
     const y = (rect.top + rect.height / 2) / window.innerHeight;
 
     confetti({
-      particleCount: 30,
-      spread: 55,
+      particleCount: 26,
+      spread: 50,
       origin: { x, y },
       colors: ['#fda4af', '#f43f5e', '#e0e7ff', '#fef08a', '#c084fc'],
-      ticks: 160,
-      gravity: 0.85,
+      ticks: 90,
+      gravity: 0.9,
     });
 
     popBalloon(balloonId);
@@ -49,8 +49,8 @@ export const Scene04BalloonRoom: React.FC = () => {
     >
       {/* Room ambient lighting glow */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-rose-600/10 blur-3xl" />
-        <div className="absolute bottom-10 left-10 h-48 w-48 rounded-full bg-purple-600/10 blur-3xl" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-rose-600/10 blur-2xl transform-gpu" />
+        <div className="absolute bottom-10 left-10 h-48 w-48 rounded-full bg-purple-600/10 blur-2xl transform-gpu" />
       </div>
 
       {/* Header */}
@@ -111,18 +111,18 @@ export const Scene04BalloonRoom: React.FC = () => {
                     }}
                     drag
                     dragConstraints={{ top: -20, bottom: 20, left: -20, right: 20 }}
-                    dragElastic={0.3}
+                    dragElastic={0.25}
                     whileTap={{ scale: depth * 1.12, scaleY: depth * 0.88 }}
                     onClick={(e) => handlePop(balloon.id, e)}
-                    className="group relative flex flex-col items-center focus:outline-hidden cursor-pointer touch-none"
+                    className="group relative flex flex-col items-center focus:outline-hidden cursor-pointer touch-none will-change-transform transform-gpu"
                   >
                     {/* Balloon Body with 3D Radial Highlight */}
                     <div
                       style={{
                         background: `radial-gradient(circle at 35% 28%, ${balloon.highlight}, ${balloon.color})`,
-                        boxShadow: `0 14px 32px ${balloon.color}55`,
+                        boxShadow: `0 14px 28px ${balloon.color}55`,
                       }}
-                      className="relative h-28 w-24 rounded-full transition-transform group-hover:scale-105 active:scale-95"
+                      className="relative h-28 w-24 rounded-full transition-transform group-hover:scale-105 active:scale-95 will-change-transform"
                     >
                       {/* Realistic light sheen reflection */}
                       <span className="absolute top-4 left-4 h-6 w-3 rounded-full bg-white/45 rotate-[-30deg]" />

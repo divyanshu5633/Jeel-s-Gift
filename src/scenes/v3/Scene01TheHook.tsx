@@ -46,25 +46,25 @@ export const Scene01TheHook: React.FC = () => {
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.6 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.35 }}
           className="text-[11px] uppercase tracking-[0.3em] text-neutral-400 mb-3"
         >
           CHAPTER 01 • PRIVATE TRANSMISSION
         </motion.p>
 
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
           className="font-cinzel text-3xl sm:text-4xl font-bold tracking-wider text-transparent bg-clip-text bg-gradient-to-b from-white via-rose-100 to-rose-300 drop-shadow-[0_0_30px_rgba(244,63,94,0.3)] leading-tight"
         >
           {config.hook.heading}
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
+          transition={{ duration: 0.4, delay: 0.12 }}
           className="mt-4 text-base font-light text-neutral-300 italic"
         >
           {config.hook.subheading}
@@ -73,7 +73,7 @@ export const Scene01TheHook: React.FC = () => {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 0.85 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
+          transition={{ duration: 0.4, delay: 0.18 }}
           className="mt-6 flex items-center gap-2 text-xs text-rose-300/80"
         >
           <Headphones size={15} className="animate-pulse" />
@@ -83,9 +83,9 @@ export const Scene01TheHook: React.FC = () => {
 
       {/* Start Button */}
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, delay: 0.8 }}
+        transition={{ duration: 0.4, delay: 0.22 }}
         className="w-full max-w-xs pb-6 flex flex-col items-center gap-2"
       >
         <button

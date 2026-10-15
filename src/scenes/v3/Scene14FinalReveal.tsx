@@ -18,10 +18,11 @@ export const Scene14FinalReveal: React.FC = () => {
     const t6 = setTimeout(() => {
       setStep(6); // photo appears
       confetti({
-        particleCount: 50,
-        spread: 75,
+        particleCount: 38,
+        spread: 65,
         origin: { y: 0.6 },
         colors: ['#fda4af', '#f43f5e', '#fef08a', '#c084fc'],
+        ticks: 90,
       });
     }, 9200);
 
@@ -112,6 +113,8 @@ export const Scene14FinalReveal: React.FC = () => {
               <img
                 src={config.finalReveal.photo}
                 alt="Finale"
+                loading="lazy"
+                decoding="async"
                 style={{ objectPosition: config.finalReveal.photoPosition || 'center 38%' }}
                 className="h-full w-full object-cover"
               />

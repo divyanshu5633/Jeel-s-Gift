@@ -82,6 +82,11 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } else if (currentScene >= 13) {
       sounds.startAmbientMusic('reveal');
     }
+
+    // Prepare audio as scene 9 approaches, avoid downloading unnecessarily on initial load
+    if (currentScene === 8 || currentScene === 9) {
+      sounds.preloadVoiceAudio(storyConfig.voiceMessage.audioUrl);
+    }
   }, [currentScene]);
 
   const toggleMute = () => {
@@ -91,6 +96,7 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const goToScene = (scene: number) => {
     sounds.playTap();
+    sounds.stopVoiceAudio();
     if (stopVoiceRef.current) {
       stopVoiceRef.current();
       setVoicePlaying(false);
@@ -110,6 +116,7 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const restartExperience = () => {
     sounds.playTap();
+    sounds.stopVoiceAudio();
     if (stopVoiceRef.current) {
       stopVoiceRef.current();
     }

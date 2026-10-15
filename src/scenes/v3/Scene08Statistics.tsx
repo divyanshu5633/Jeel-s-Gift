@@ -12,39 +12,42 @@ export const Scene08Statistics: React.FC = () => {
   const [isCollapsing, setIsCollapsing] = useState(false);
 
   useEffect(() => {
-    const duration = 1000;
-    const steps = 30;
-    const intervalTime = duration / steps;
-    let step = 0;
+    let animId: number;
+    const startTime = performance.now();
+    const duration = 900;
 
-    const timer = setInterval(() => {
-      step++;
-      const progress = step / steps;
+    const tick = (now: number) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // Smooth ease-out quad
+      const eased = 1 - (1 - progress) * (1 - progress);
+
       const newCounts: { [key: string]: number } = {};
-
       config.statistics.forEach((stat) => {
         if (typeof stat.value === 'number') {
-          newCounts[stat.id] = Math.floor(stat.value * progress);
+          newCounts[stat.id] = Math.floor(stat.value * eased);
         }
       });
 
       setCounts(newCounts);
 
-      if (step >= steps) {
-        clearInterval(timer);
+      if (progress < 1) {
+        animId = requestAnimationFrame(tick);
       }
-    }, intervalTime);
+    };
 
-    return () => clearInterval(timer);
+    animId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(animId);
   }, [config.statistics]);
 
   const handleCollapse = () => {
     sounds.playCelebration();
     confetti({
-      particleCount: 38,
-      spread: 60,
+      particleCount: 30,
+      spread: 55,
       origin: { y: 0.7 },
       colors: ['#38bdf8', '#f97316', '#a855f7', '#f43f5e'],
+      ticks: 90,
     });
 
     setIsCollapsing(true);
@@ -64,7 +67,7 @@ export const Scene08Statistics: React.FC = () => {
             animate={{ scale: 1.5, opacity: 1 }}
             exit={{ scale: 14, opacity: 0 }}
             transition={{ duration: 1, ease: 'easeInOut' }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md pointer-events-none"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm pointer-events-none transform-gpu"
           >
             <div className="relative flex items-center justify-center">
               <div className="h-32 w-32 rounded-full bg-rose-500/50 blur-xl animate-pulse" />

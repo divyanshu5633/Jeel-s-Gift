@@ -13,12 +13,15 @@ export const Scene09VoiceMessage: React.FC = () => {
     voicePlaying,
     voiceProgress,
     toggleVoicePlay,
+    stopVoicePlay,
   } = useStory();
 
   const [progress, setProgress] = useState(0);
   const [isHolding, setIsHolding] = useState(false);
   const [isMeltToLetter, setIsMeltToLetter] = useState(false);
   const holdIntervalRef = useRef<number | null>(null);
+  const voicePlayingRef = useRef(voicePlaying);
+  voicePlayingRef.current = voicePlaying;
 
   const startHold = () => {
     if (isPrivateUnlocked) return;
@@ -28,12 +31,15 @@ export const Scene09VoiceMessage: React.FC = () => {
     holdIntervalRef.current = window.setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
-          clearInterval(holdIntervalRef.current!);
+          if (holdIntervalRef.current) {
+            clearInterval(holdIntervalRef.current);
+            holdIntervalRef.current = null;
+          }
           setPrivateUnlocked(true);
           sounds.playUnlock();
           return 100;
         }
-        return prev + 12; // Faster, snappy ~0.7s unlock
+        return prev + 12; // Snappy ~0.7s unlock
       });
     }, 60);
   };
@@ -45,7 +51,7 @@ export const Scene09VoiceMessage: React.FC = () => {
       clearInterval(holdIntervalRef.current);
       holdIntervalRef.current = null;
     }
-    // If they got past 50%, unlock it anyway to prevent frustration
+    // If they got past 40%, unlock it anyway to prevent frustration
     if (progress > 40) {
       setPrivateUnlocked(true);
       sounds.playUnlock();
@@ -55,25 +61,34 @@ export const Scene09VoiceMessage: React.FC = () => {
   };
 
   const handleInstantUnlock = () => {
+    if (holdIntervalRef.current) {
+      clearInterval(holdIntervalRef.current);
+      holdIntervalRef.current = null;
+    }
     sounds.playUnlock();
     setPrivateUnlocked(true);
   };
 
+  // Only stop voice audio when leaving the scene (unmount), NOT on every audio progress update
   useEffect(() => {
     return () => {
-      if (holdIntervalRef.current) clearInterval(holdIntervalRef.current);
-      if (voicePlaying) {
-        toggleVoicePlay();
+      if (holdIntervalRef.current) {
+        clearInterval(holdIntervalRef.current);
+        holdIntervalRef.current = null;
+      }
+      if (voicePlayingRef.current) {
+        stopVoicePlay();
       }
     };
-  }, [voicePlaying, toggleVoicePlay]);
+  }, [stopVoicePlay]);
 
   const handleContinue = () => {
+    stopVoicePlay();
     sounds.playPaperRustle();
     setIsMeltToLetter(true);
     setTimeout(() => {
       nextScene();
-    }, 600);
+    }, 250);
   };
 
   const size = 132;

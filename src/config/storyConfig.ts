@@ -359,7 +359,7 @@ export const storyConfig: StoryConfigV3 = {
       82, 52, 84, 66, 44, 62, 88, 74, 94, 52, 42, 68, 84, 62, 98, 82, 46, 28
     ],
     transcript: '“Hey Jeel ❤️... hearing your voice always resets my whole day. Some things are simply better heard than read. I just wanted to leave this quiet reminder of how deeply you are loved.”',
-    audioUrl: '/assets/audio/for_jeelu.mp4',
+    audioUrl: '/assets/audio/for_jeelu.m4a',
   },
 
   // -----------------------------------------------------------------------

@@ -5,12 +5,12 @@ import { ParticleBackground } from './components/ParticleBackground';
 import { HeaderProgress } from './components/HeaderProgress';
 import { MobileFrame } from './components/MobileFrame';
 
-// Chapter 01 is statically imported to ensure instant initial render (FCP / LCP)
+// Chapters 01 & 02 are statically imported to ensure instant initial render and zero wait on Start
 import { Scene01TheHook } from './scenes/v3/Scene01TheHook';
+import { Scene02WhatsAppChat } from './scenes/v3/Scene02WhatsAppChat';
 
-// Chapters 02 to 14 are lazily loaded to keep the initial JavaScript bundle tiny
+// Chapters 03 to 14 are lazily loaded to keep the initial JavaScript bundle tiny
 const sceneLoaders: Record<number, () => Promise<{ default: React.ComponentType }>> = {
-  2: () => import('./scenes/v3/Scene02WhatsAppChat').then((m) => ({ default: m.Scene02WhatsAppChat })),
   3: () => import('./scenes/v3/Scene03MemoryGame').then((m) => ({ default: m.Scene03MemoryGame })),
   4: () => import('./scenes/v3/Scene04BalloonRoom').then((m) => ({ default: m.Scene04BalloonRoom })),
   5: () => import('./scenes/v3/Scene05OurUniverse').then((m) => ({ default: m.Scene05OurUniverse })),
@@ -25,7 +25,6 @@ const sceneLoaders: Record<number, () => Promise<{ default: React.ComponentType 
   14: () => import('./scenes/v3/Scene14FinalReveal').then((m) => ({ default: m.Scene14FinalReveal })),
 };
 
-const Scene02WhatsAppChat = React.lazy(sceneLoaders[2]);
 const Scene03MemoryGame = React.lazy(sceneLoaders[3]);
 const Scene04BalloonRoom = React.lazy(sceneLoaders[4]);
 const Scene05OurUniverse = React.lazy(sceneLoaders[5]);
@@ -92,7 +91,7 @@ const SceneRenderer: React.FC = () => {
         initial={{ opacity: 0, scale: 0.985 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 1.015 }}
-        transition={{ duration: 0.35, ease: 'easeInOut' }}
+        transition={{ duration: 0.2, ease: 'easeInOut' }}
         className="w-full flex-1 flex flex-col"
       >
         <React.Suspense fallback={<div className="w-full flex-1 min-h-dvh bg-black" />}>

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, useCallback } from 'react';
 import { storyConfig } from '../config/storyConfig';
 import { sounds } from '../utils/soundEffects';
 
@@ -34,6 +34,7 @@ interface StoryContextType {
   voicePlaying: boolean;
   voiceProgress: number;
   toggleVoicePlay: () => void;
+  stopVoicePlay: () => void;
 
   // Scene 11 Candle
   candleExtinguished: boolean;
@@ -94,33 +95,57 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIsMuted(muted);
   };
 
-  const goToScene = (scene: number) => {
-    sounds.playTap();
-    sounds.stopVoiceAudio();
+  const stopVoicePlay = useCallback(() => {
     if (stopVoiceRef.current) {
       stopVoiceRef.current();
-      setVoicePlaying(false);
+      stopVoiceRef.current = null;
     }
+    sounds.stopVoiceAudio();
+    setVoicePlaying(false);
+  }, []);
+
+  const startVoicePlay = useCallback(() => {
+    sounds.playTap();
+    setVoicePlaying(true);
+    stopVoiceRef.current = sounds.playVoiceAudio(
+      storyConfig.voiceMessage.durationSeconds,
+      (prog) => setVoiceProgress(prog),
+      () => {
+        setVoicePlaying(false);
+        setVoiceProgress(1);
+        stopVoiceRef.current = null;
+      },
+      storyConfig.voiceMessage.audioUrl
+    );
+  }, []);
+
+  const toggleVoicePlay = useCallback(() => {
+    if (voicePlaying) {
+      stopVoicePlay();
+    } else {
+      startVoicePlay();
+    }
+  }, [voicePlaying, stopVoicePlay, startVoicePlay]);
+
+  const goToScene = useCallback((scene: number) => {
+    sounds.playTap();
+    stopVoicePlay();
     const targetScene = Math.max(1, Math.min(14, scene));
     setCurrentScene(targetScene);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  }, [stopVoicePlay]);
 
-  const nextScene = () => {
+  const nextScene = useCallback(() => {
     goToScene(currentScene + 1);
-  };
+  }, [goToScene, currentScene]);
 
-  const prevScene = () => {
+  const prevScene = useCallback(() => {
     goToScene(currentScene - 1);
-  };
+  }, [goToScene, currentScene]);
 
-  const restartExperience = () => {
+  const restartExperience = useCallback(() => {
     sounds.playTap();
-    sounds.stopVoiceAudio();
-    if (stopVoiceRef.current) {
-      stopVoiceRef.current();
-    }
-    setVoicePlaying(false);
+    stopVoicePlay();
     setVoiceProgress(0);
     setPoppedBalloons([]);
     setVisitedStars([]);
@@ -134,7 +159,7 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     if (window.location.search || window.location.hash || window.location.pathname !== '/') {
       window.history.replaceState({}, '', '/');
     }
-  };
+  }, [stopVoicePlay]);
 
   const popBalloon = (id: string) => {
     if (!poppedBalloons.includes(id)) {
@@ -154,29 +179,6 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     sounds.playUnlock();
     if (!unlockedVaultItems.includes(id)) {
       setUnlockedVaultItems((prev) => [...prev, id]);
-    }
-  };
-
-  const toggleVoicePlay = () => {
-    if (voicePlaying) {
-      if (stopVoiceRef.current) {
-        stopVoiceRef.current();
-        stopVoiceRef.current = null;
-      }
-      setVoicePlaying(false);
-    } else {
-      sounds.playTap();
-      setVoicePlaying(true);
-      stopVoiceRef.current = sounds.playVoiceAudio(
-        storyConfig.voiceMessage.durationSeconds,
-        (prog) => setVoiceProgress(prog),
-        () => {
-          setVoicePlaying(false);
-          setVoiceProgress(1);
-          stopVoiceRef.current = null;
-        },
-        storyConfig.voiceMessage.audioUrl
-      );
     }
   };
 
@@ -223,6 +225,7 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         voicePlaying,
         voiceProgress,
         toggleVoicePlay,
+        stopVoicePlay,
         candleExtinguished,
         extinguishCandle,
         checkedPromises,

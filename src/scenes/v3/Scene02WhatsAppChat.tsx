@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { CheckCheck, Heart } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
@@ -9,10 +9,11 @@ export const Scene02WhatsAppChat: React.FC = () => {
   const [visibleCount, setVisibleCount] = useState(1);
   const [isTyping, setIsTyping] = useState(false);
   const [isFloatingUp, setIsFloatingUp] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Deliver messages with comfortable, gentle pacing
-    const delays = [800, 2000, 3200, 4400];
+    // Fast, responsive message pacing so the chat begins immediately without lag
+    const delays = [150, 800, 1500, 2200];
     const timeouts: number[] = [];
 
     delays.forEach((delay, idx) => {
@@ -22,7 +23,7 @@ export const Scene02WhatsAppChat: React.FC = () => {
         const msgTimer = window.setTimeout(() => {
           setVisibleCount(idx + 2);
           setIsTyping(idx + 2 < config.chat.messages.length);
-        }, 250);
+        }, 200);
         timeouts.push(msgTimer);
       }, delay);
       timeouts.push(t);
@@ -30,6 +31,10 @@ export const Scene02WhatsAppChat: React.FC = () => {
 
     return () => timeouts.forEach((id) => clearTimeout(id));
   }, [config.chat.messages.length]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [visibleCount, isTyping]);
 
   const handleFastForward = () => {
     // Tapping chat speeds up all messages immediately so nobody is ever stuck
@@ -45,7 +50,7 @@ export const Scene02WhatsAppChat: React.FC = () => {
     setIsFloatingUp(true);
     setTimeout(() => {
       nextScene();
-    }, 600);
+    }, 200);
   };
 
   return (
@@ -117,6 +122,7 @@ export const Scene02WhatsAppChat: React.FC = () => {
             <span className="h-2 w-2 rounded-full bg-rose-400/80 animate-bounce [animation-delay:0.4s]" />
           </motion.div>
         )}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Unmissable Proceed Action Button */}

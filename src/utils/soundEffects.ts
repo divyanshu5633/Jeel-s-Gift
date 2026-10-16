@@ -417,7 +417,7 @@ class SoundEngine {
     if (!audioUrl || this.currentVoiceAudio) return;
     try {
       const audio = new Audio();
-      audio.preload = 'metadata';
+      audio.preload = 'auto';
       audio.src = audioUrl;
       this.currentVoiceAudio = audio;
     } catch {
@@ -427,8 +427,13 @@ class SoundEngine {
 
   public stopVoiceAudio() {
     if (this.currentVoiceAudio) {
-      this.currentVoiceAudio.pause();
+      try {
+        this.currentVoiceAudio.pause();
+      } catch {}
       this.currentVoiceAudio = null;
+    }
+    if (this.ambientGain && this.ctx) {
+      this.ambientGain.gain.setTargetAtTime(this.isMuted ? 0 : 0.12, this.ctx.currentTime, 0.5);
     }
   }
 
@@ -440,16 +445,19 @@ class SoundEngine {
     audioUrl?: string
   ): () => void {
     if (this.currentVoiceAudio) {
-      this.currentVoiceAudio.pause();
+      try {
+        this.currentVoiceAudio.pause();
+      } catch {}
       this.currentVoiceAudio = null;
     }
 
     if (audioUrl) {
       try {
-        const audio = new Audio(audioUrl);
+        const audio = new Audio();
         this.currentVoiceAudio = audio;
         audio.preload = 'auto';
         audio.muted = this.isMuted;
+        audio.volume = 1.0;
 
         // Duck ambient music while voice note plays
         if (this.ambientGain && this.ctx) {
@@ -462,13 +470,26 @@ class SoundEngine {
           }
         };
 
+        const candidateUrls = [audioUrl];
+        if (audioUrl.endsWith('.m4a')) {
+          candidateUrls.push(audioUrl.replace(/\.m4a$/, '.mp4'));
+        } else if (audioUrl.endsWith('.mp4')) {
+          candidateUrls.push(audioUrl.replace(/\.mp4$/, '.m4a'));
+        }
+
+        let candidateIndex = 0;
+        let isStopped = false;
+
         const handleTimeUpdate = () => {
+          if (isStopped) return;
           const dur = audio.duration && !isNaN(audio.duration) && audio.duration > 0 ? audio.duration : durationSeconds;
           const prog = Math.min(1, Math.max(0, audio.currentTime / dur));
           onProgress(prog);
         };
 
         const handleEnded = () => {
+          if (isStopped) return;
+          isStopped = true;
           restoreAmbient();
           if (this.currentVoiceAudio === audio) {
             this.currentVoiceAudio = null;
@@ -476,17 +497,39 @@ class SoundEngine {
           onEnd();
         };
 
+        const handleError = () => {
+          if (isStopped) return;
+          candidateIndex++;
+          if (candidateIndex < candidateUrls.length) {
+            audio.src = candidateUrls[candidateIndex];
+            audio.load();
+            audio.play().catch((err) => {
+              console.warn('Playback retry error:', err);
+            });
+          }
+        };
+
         audio.addEventListener('timeupdate', handleTimeUpdate);
         audio.addEventListener('ended', handleEnded);
+        audio.addEventListener('error', handleError);
 
-        audio.play().catch((err) => {
-          console.warn('Real audio playback blocked or failed:', err);
-        });
+        audio.src = candidateUrls[0];
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('Real audio playback blocked or failed:', err);
+            handleError();
+          });
+        }
 
         return () => {
+          isStopped = true;
           audio.removeEventListener('timeupdate', handleTimeUpdate);
           audio.removeEventListener('ended', handleEnded);
-          audio.pause();
+          audio.removeEventListener('error', handleError);
+          try {
+            audio.pause();
+          } catch {}
           restoreAmbient();
           if (this.currentVoiceAudio === audio) {
             this.currentVoiceAudio = null;

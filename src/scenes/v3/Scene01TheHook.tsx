@@ -14,7 +14,7 @@ export const Scene01TheHook: React.FC = () => {
     setIsZooming(true);
     setTimeout(() => {
       nextScene();
-    }, 650);
+    }, 180);
   };
 
   return (
@@ -25,7 +25,7 @@ export const Scene01TheHook: React.FC = () => {
           <motion.div
             initial={{ scale: 0.1, opacity: 0 }}
             animate={{ scale: 24, opacity: 1 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
             className="pointer-events-none fixed z-50 h-32 w-32 rounded-full bg-rose-500/30 blur-2xl"
           />
         )}
@@ -40,7 +40,7 @@ export const Scene01TheHook: React.FC = () => {
           opacity: isZooming ? 0 : 1,
           filter: isZooming ? 'blur(10px)' : 'blur(0px)',
         }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.2 }}
         className="my-auto flex flex-col items-center max-w-xs"
       >
         <motion.p

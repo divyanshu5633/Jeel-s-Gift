@@ -465,22 +465,7 @@ export const storyConfig: StoryConfigV3 = {
   ],
 
   // -----------------------------------------------------------------------
-  // CHAPTER 13 — THE LAST GIFT 🎁 (Silver Necklace with Pendant)
-  // -----------------------------------------------------------------------
-  gift: {
-    heading: 'ONE LAST THING...',
-    buttonText: 'OPEN THE BOX',
-    boxPrompt: 'Tap the ribbon or box to reveal what’s waiting for you.',
-    necklaceTitle: 'A Sterling Silver Pendant',
-    necklaceSubtitle: 'Crafted to be kept close to you, always.',
-    necklaceDescription: '“A little piece of my heart in sterling silver, crafted to rest gently against yours everywhere you go.”',
-    necklaceDetail: 'Every time you touch this pendant, remember that you are loved unconditionally.',
-    continueButtonText: 'CONTINUE TO OUR FINALE ❤️',
-    necklaceImage: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80',
-  },
-
-  // -----------------------------------------------------------------------
-  // CHAPTER 14 — FINAL REVEAL (Quiet, Pure Emotion)
+  // CHAPTER 13 — FINAL REVEAL (Quiet, Pure Emotion)
   // -----------------------------------------------------------------------
   finalReveal: {
     lines: [
@@ -496,5 +481,23 @@ export const storyConfig: StoryConfigV3 = {
     birthdayWish: 'Happy Birthday, Jeel. ❤️',
     signature: '— Divyanshu',
     whisperAudioNote: '“I love You Sweetheart ❤️”',
+  },
+
+  // -----------------------------------------------------------------------
+  // CHAPTER 14 — THE THIRD MYSTERY 💎 (Treasure Hunt Clue)
+  // -----------------------------------------------------------------------
+  thirdMystery: {
+    badge: 'THE THIRD CLUE • TREASURE HUNT',
+    title: 'THE THIRD MYSTERY 💎',
+    subtitle: 'Solve the riddle to find the secret waiting for you.',
+    stanzas: [
+      "Your next treasure isn't far away,",
+      "But finding it takes more than words can say.",
+      "Two places to sit, a journey to share,",
+      "Yet one holds a secret hidden beneath its care.",
+      "Don't search the skies or look at the view…",
+      "The answer lies below the place reserved for you. ❤️",
+    ],
+    instruction: 'Look beneath where you are seated right now...',
   },
 };

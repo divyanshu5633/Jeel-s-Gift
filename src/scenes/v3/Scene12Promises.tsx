@@ -141,7 +141,7 @@ export const Scene12Promises: React.FC = () => {
           onClick={nextScene}
           className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 p-4 text-xs sm:text-sm font-bold uppercase tracking-widest text-white shadow-xl active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
         >
-          <span>ONE LAST THING... (SURPRISE GIFT)</span>
+          <span>CONTINUE TO OUR SURPRISE ❤️</span>
           <ArrowRight size={16} />
         </button>
       </div>

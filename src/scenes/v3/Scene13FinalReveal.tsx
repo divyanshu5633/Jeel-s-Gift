@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import confetti from 'canvas-confetti';
-import { RotateCcw, Heart, Archive } from 'lucide-react';
+import { RotateCcw, Heart, Archive, ArrowRight, Sparkles } from 'lucide-react';
 import { useStory } from '../../context/StoryContext';
+import { sounds } from '../../utils/soundEffects';
 
-export const Scene14FinalReveal: React.FC = () => {
-  const { config, restartExperience, goToScene } = useStory();
+export const Scene13FinalReveal: React.FC = () => {
+  const { config, nextScene, restartExperience, goToScene } = useStory();
   const [step, setStep] = useState(0);
   const [showButtons, setShowButtons] = useState(false);
 
@@ -18,16 +19,16 @@ export const Scene14FinalReveal: React.FC = () => {
     const t6 = setTimeout(() => {
       setStep(6); // photo appears
       confetti({
-        particleCount: 38,
-        spread: 65,
+        particleCount: 45,
+        spread: 70,
         origin: { y: 0.6 },
-        colors: ['#fda4af', '#f43f5e', '#fef08a', '#c084fc'],
-        ticks: 90,
+        colors: ['#fda4af', '#f43f5e', '#fef08a', '#c084fc', '#38bdf8'],
+        ticks: 100,
       });
     }, 9200);
 
-    // Let the final message breathe for a while before showing replay buttons
-    const t7 = setTimeout(() => setShowButtons(true), 11000);
+    // Reveal clue button and replay controls
+    const t7 = setTimeout(() => setShowButtons(true), 10500);
 
     return () => {
       clearTimeout(t1);
@@ -40,8 +41,30 @@ export const Scene14FinalReveal: React.FC = () => {
     };
   }, []);
 
+  const handleFastForward = () => {
+    if (step < 6) {
+      setStep(6);
+      setShowButtons(true);
+      confetti({
+        particleCount: 40,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ['#fda4af', '#f43f5e', '#fef08a', '#c084fc', '#38bdf8'],
+        ticks: 90,
+      });
+    }
+  };
+
+  const handleGoToThirdMystery = () => {
+    sounds.playTap();
+    nextScene(); // Chapter 14: The Third Mystery Clue
+  };
+
   return (
-    <div className="relative flex min-h-dvh flex-col items-center justify-between p-6 select-none bg-black text-center overflow-y-auto">
+    <div
+      onClick={handleFastForward}
+      className="relative flex min-h-dvh flex-col items-center justify-between p-5 select-none bg-black text-center overflow-y-auto"
+    >
       <div className="pt-6" />
 
       {/* Cinematic Sequence */}
@@ -101,7 +124,7 @@ export const Scene14FinalReveal: React.FC = () => {
           </motion.h1>
         )}
 
-        {/* Step 6: Keepsake Framed Photo & Romantic Ending */}
+        {/* Step 6: Keepsake Framed Photo & Romantic Birthday Card */}
         {step >= 6 && (
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 25 }}
@@ -109,7 +132,7 @@ export const Scene14FinalReveal: React.FC = () => {
             transition={{ duration: 0.8 }}
             className="w-full max-w-[320px] rounded-3xl bg-white p-4 pb-6 text-neutral-900 shadow-2xl border border-neutral-100"
           >
-            <div className="relative aspect-[4/5] max-h-[46vh] w-full overflow-hidden rounded-2xl bg-neutral-900">
+            <div className="relative aspect-[4/5] max-h-[44vh] w-full overflow-hidden rounded-2xl bg-neutral-900">
               <img
                 src={config.finalReveal.photo}
                 alt="Finale"
@@ -140,31 +163,52 @@ export const Scene14FinalReveal: React.FC = () => {
         )}
       </div>
 
-      {/* Replay Actions (fades in quietly after pause) */}
-      <div className="min-h-24 pb-6 max-w-xs mx-auto w-full z-10 flex flex-col items-center justify-center gap-2">
+      {/* Clue Bridge & Action Buttons (Fades in after the surprise is absorbed) */}
+      <div className="min-h-28 pb-6 max-w-xs mx-auto w-full z-10 flex flex-col items-center justify-center gap-2.5">
         <AnimatePresence>
           {showButtons && (
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="w-full flex flex-col gap-2"
+              className="w-full flex flex-col gap-2.5"
             >
+              {/* THE THIRD MYSTERY PROCEED BUTTON */}
               <button
-                onClick={restartExperience}
-                className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-500 p-4 text-xs font-bold uppercase tracking-widest text-white shadow-lg active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleGoToThirdMystery();
+                }}
+                className="w-full rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 p-4 text-xs sm:text-sm font-bold uppercase tracking-widest text-white shadow-[0_0_30px_rgba(244,63,94,0.55)] active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer group"
               >
-                <RotateCcw size={15} />
-                <span>PLAY IT AGAIN</span>
+                <Sparkles size={16} className="text-amber-200 animate-spin" style={{ animationDuration: '4s' }} />
+                <span>THE THIRD MYSTERY 💎</span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
 
-              <button
-                onClick={() => goToScene(6)}
-                className="w-full rounded-full bg-white/10 hover:bg-white/15 border border-white/15 py-3 text-[11px] font-semibold uppercase tracking-widest text-neutral-300 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <Archive size={14} />
-                <span>OUR STORY ARCHIVE</span>
-              </button>
+              <div className="flex gap-2 w-full pt-1">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    restartExperience();
+                  }}
+                  className="flex-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 py-3 text-[11px] font-semibold uppercase tracking-wider text-neutral-300 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <RotateCcw size={13} />
+                  <span>REPLAY</span>
+                </button>
+
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    goToScene(6);
+                  }}
+                  className="flex-1 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 py-3 text-[11px] font-semibold uppercase tracking-wider text-neutral-300 transition-all active:scale-95 flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <Archive size={13} />
+                  <span>VAULT</span>
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

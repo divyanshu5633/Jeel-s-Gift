@@ -21,8 +21,8 @@ const sceneLoaders: Record<number, () => Promise<{ default: React.ComponentType 
   10: () => import('./scenes/v3/Scene10HandwrittenLetter').then((m) => ({ default: m.Scene10HandwrittenLetter })),
   11: () => import('./scenes/v3/Scene11TheCandle').then((m) => ({ default: m.Scene11TheCandle })),
   12: () => import('./scenes/v3/Scene12Promises').then((m) => ({ default: m.Scene12Promises })),
-  13: () => import('./scenes/v3/Scene13TheLastGift').then((m) => ({ default: m.Scene13TheLastGift })),
-  14: () => import('./scenes/v3/Scene14FinalReveal').then((m) => ({ default: m.Scene14FinalReveal })),
+  13: () => import('./scenes/v3/Scene13FinalReveal').then((m) => ({ default: m.Scene13FinalReveal })),
+  14: () => import('./scenes/v3/Scene14TheThirdMystery').then((m) => ({ default: m.Scene14TheThirdMystery })),
 };
 
 const Scene03MemoryGame = React.lazy(sceneLoaders[3]);
@@ -35,8 +35,8 @@ const Scene09VoiceMessage = React.lazy(sceneLoaders[9]);
 const Scene10HandwrittenLetter = React.lazy(sceneLoaders[10]);
 const Scene11TheCandle = React.lazy(sceneLoaders[11]);
 const Scene12Promises = React.lazy(sceneLoaders[12]);
-const Scene13TheLastGift = React.lazy(sceneLoaders[13]);
-const Scene14FinalReveal = React.lazy(sceneLoaders[14]);
+const Scene13FinalReveal = React.lazy(sceneLoaders[13]);
+const Scene14TheThirdMystery = React.lazy(sceneLoaders[14]);
 
 const SceneRenderer: React.FC = () => {
   const { currentScene } = useStory();
@@ -76,9 +76,9 @@ const SceneRenderer: React.FC = () => {
       case 12:
         return <Scene12Promises />;
       case 13:
-        return <Scene13TheLastGift />;
+        return <Scene13FinalReveal />;
       case 14:
-        return <Scene14FinalReveal />;
+        return <Scene14TheThirdMystery />;
       default:
         return <Scene01TheHook />;
     }

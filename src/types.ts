@@ -150,20 +150,7 @@ export interface StoryConfigV3 {
   // Chapter 12: Things I Want To Do With You (Expanded Promises)
   promises: PromiseItem[];
 
-  // Chapter 13: The Last Gift (Silver Necklace & Pendant)
-  gift: {
-    heading: string;
-    buttonText: string;
-    boxPrompt: string;
-    necklaceTitle: string;
-    necklaceSubtitle: string;
-    necklaceDescription: string;
-    necklaceDetail: string;
-    continueButtonText: string;
-    necklaceImage?: string;
-  };
-
-  // Chapter 14: Final Reveal
+  // Chapter 13: Final Reveal (Quiet, Pure Emotion)
   finalReveal: {
     lines: string[];
     mainHeading: string;
@@ -173,6 +160,15 @@ export interface StoryConfigV3 {
     birthdayWish: string;
     signature: string;
     whisperAudioNote?: string;
+  };
+
+  // Chapter 14: The Third Mystery (Treasure Hunt Clue)
+  thirdMystery: {
+    badge: string;
+    title: string;
+    subtitle: string;
+    stanzas: string[];
+    instruction?: string;
   };
 }
 

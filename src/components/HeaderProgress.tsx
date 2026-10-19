@@ -5,8 +5,8 @@ import { useStory } from '../context/StoryContext';
 export const HeaderProgress: React.FC = () => {
   const { currentScene, isMuted, toggleMute, nextScene } = useStory();
 
-  // Hide in Scene 1 (Hook) and Scene 14 (Final Reveal) for cinematic immersion
-  if (currentScene === 1 || currentScene === 14) {
+  // Hide in Scene 1 (Hook), Scene 13 (Final Reveal), and Scene 14 (The Third Mystery) for cinematic immersion
+  if (currentScene === 1 || currentScene === 13 || currentScene === 14) {
     return null;
   }
 
@@ -35,7 +35,9 @@ export const HeaderProgress: React.FC = () => {
       case 12:
         return { num: '12', name: 'THINGS I WANT WITH YOU' };
       case 13:
-        return { num: '13', name: 'THE LAST GIFT' };
+        return { num: '13', name: 'OUR BIRTHDAY SURPRISE' };
+      case 14:
+        return { num: '14', name: 'THE THIRD MYSTERY' };
       default:
         return { num: '•', name: 'OUR STORY' };
     }
